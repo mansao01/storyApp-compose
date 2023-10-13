@@ -20,6 +20,7 @@ interface ApiService {
         password: String
     ): LoginResponse
 
+    @FormUrlEncoded
     @POST("register")
     suspend fun register(
         @Field("name")
