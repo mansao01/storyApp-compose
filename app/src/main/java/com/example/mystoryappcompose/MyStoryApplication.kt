@@ -7,16 +7,20 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.mystoryappcompose.data.AppContainer
 import com.example.mystoryappcompose.data.DefaultAppContainer
+import com.example.mystoryappcompose.preferences.AuthTokenManager
 
 private const val AUTH_PREF_NAME = "auth_pref"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = AUTH_PREF_NAME
 )
-class MyStoryApplication:Application() {
-    lateinit var container:AppContainer
+
+class MyStoryApplication : Application() {
+    lateinit var container: AppContainer
+    lateinit var authTokenManager: AuthTokenManager
     override fun onCreate() {
         super.onCreate()
         container = DefaultAppContainer()
+        authTokenManager = AuthTokenManager(dataStore)
 
     }
 }

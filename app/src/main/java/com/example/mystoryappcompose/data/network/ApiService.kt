@@ -33,6 +33,6 @@ interface ApiService {
 
     @GET("stories")
     suspend fun getStories(
-        @Header("Authorization") header: String
+        @Header("Authorization") token: String
     ):GetStoriesResponse
 }

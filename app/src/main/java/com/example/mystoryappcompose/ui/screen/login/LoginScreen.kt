@@ -1,5 +1,6 @@
 package com.example.mystoryappcompose.ui.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,20 +46,21 @@ import com.example.mystoryappcompose.ui.component.MToast
 @Composable
 fun LoginScreen(
     uiState:LoginUiState,
-    loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
+    loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory),
+    navigateToHome:() ->Unit
 ) {
-
-
         val context = LocalContext.current
         when (uiState) {
             is LoginUiState.StandBy -> LoginComponent(
                 loginViewModel = loginViewModel,
-//                navigateToRegister = navigateToRegister
+                navigateToHome = navigateToHome
             )
 
             is LoginUiState.Loading -> LoadingScreen()
             is LoginUiState.Success -> {
                 MToast(context, uiState.loginResponse.message)
+                navigateToHome()
+                Log.d("LoginScreen", uiState.loginResponse.loginResult.token)
             }
 
             is LoginUiState.Error -> {
@@ -74,7 +76,9 @@ fun LoginScreen(
 fun LoginComponent(
     loginViewModel: LoginViewModel,
     modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit
 //    navigateToRegister: () -> Unit
+
 ) {
     var email by remember { mutableStateOf("") }
     var isEmailEmpty by remember { mutableStateOf(false) }
@@ -171,10 +175,13 @@ fun LoginComponent(
                     when {
                         email.isEmpty() -> isEmailEmpty = true
                         password.isEmpty() -> isPasswordEmpty = true
-                        else -> loginViewModel.login(
-                            email,
-                            password,
-                        )
+                        else ->  {
+                            loginViewModel.login(
+                                email,
+                                password,
+                            )
+                            navigateToHome()
+                        }
                     }
                 },
                 modifier = Modifier

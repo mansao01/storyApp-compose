@@ -1,4 +1,4 @@
-package com.example.mystoryappcompose.ui.screen.login
+package com.example.mystoryappcompose.ui.screen.home
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,49 +11,31 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mystoryappcompose.MyStoryApplication
 import com.example.mystoryappcompose.data.MyStoryRepository
 import com.example.mystoryappcompose.preferences.AuthTokenManager
-import com.example.mystoryappcompose.ui.common.LoginUiState
+import com.example.mystoryappcompose.ui.common.HomeUiState
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
-class LoginViewModel(
+class HomeViewModel(
     private val myStoryRepository: MyStoryRepository,
     private val authTokenManager: AuthTokenManager
 ) : ViewModel() {
-    var uiState: LoginUiState by mutableStateOf(LoginUiState.StandBy)
+    var uiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
 
-    fun getUiState() {
-        uiState = LoginUiState.StandBy
+    init {
+        getStories()
     }
-
-    fun login(email: String, password: String) {
+    private fun getStories(){
         viewModelScope.launch {
-            uiState = LoginUiState.Loading
+            uiState = HomeUiState.Loading
             uiState = try {
-                val result = myStoryRepository.login(email, password)
-                authTokenManager.saveAccessToken(result.loginResult.token)
-                authTokenManager.saveIsLoginState(true)
-                LoginUiState.Success(result)
+                val result = myStoryRepository.getStories("Bearer ${authTokenManager.getAccessToken()}")
+                HomeUiState.Success(result)
+            }catch (e:Exception){
 
-            } catch (e: Exception) {
-                val errorMessage = when (e) {
-                    is IOException -> "Network error occurred"
-                    is HttpException -> {
-                        when (e.code()) {
-                            400 -> e.response()?.errorBody()?.string().toString()
-                            // Add more cases for specific HTTP error codes if needed
-                            else -> "HTTP error: ${e.code()}"
-                        }
-                    }
-
-                    else -> "An unexpected error occurred"
-                }
-                LoginUiState.Error(errorMessage)
+                HomeUiState.Error(e.toString())
             }
         }
     }
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -61,7 +43,7 @@ class LoginViewModel(
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MyStoryApplication)
                 val noteRepository = application.container.myStoryRepository
                 val authTokenManager = application.authTokenManager
-                LoginViewModel(
+                HomeViewModel(
                     myStoryRepository = noteRepository,
                     authTokenManager = authTokenManager
                 )
