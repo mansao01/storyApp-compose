@@ -17,7 +17,7 @@ import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 @Composable
 fun MyStoryApp(
     navController: NavHostController = rememberNavController(),
-    startDestination:String
+    startDestination:String,
     ) {
     NavHost(navController = navController, startDestination = startDestination) {
 

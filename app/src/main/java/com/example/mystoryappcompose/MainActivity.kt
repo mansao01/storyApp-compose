@@ -26,8 +26,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val startDestination =authViewModel.startDestination
-                        MyStoryApp(startDestination = startDestination.value)
+                    val startDestination = authViewModel.startDestination
+
+                    MyStoryApp(startDestination = startDestination.value)
                 }
             }
         }

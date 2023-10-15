@@ -21,10 +21,9 @@ class HomeViewModel(
     var uiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
 
-    init {
-        getStories()
-    }
-    private fun getStories(){
+
+
+      fun getStories(){
         viewModelScope.launch {
             uiState = HomeUiState.Loading
             uiState = try {
@@ -34,6 +33,13 @@ class HomeViewModel(
 
                 HomeUiState.Error(e.toString())
             }
+        }
+    }
+
+    fun logout(){
+        viewModelScope.launch {
+            authTokenManager.clearTokens()
+            authTokenManager.saveIsLoginState(false)
         }
     }
     companion object {

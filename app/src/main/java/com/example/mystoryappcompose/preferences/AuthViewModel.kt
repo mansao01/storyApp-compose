@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val authTokenManager: AuthTokenManager
 ) : ViewModel() {
-    private val _startDestination: MutableState<String> = mutableStateOf(Screen.Login.route)
+    private val _startDestination: MutableState<String> = mutableStateOf(Screen.Home.route)
     val startDestination: State<String> = _startDestination
 
     private val _isLoading: MutableState<Boolean> = mutableStateOf(true)
