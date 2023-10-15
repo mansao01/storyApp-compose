@@ -17,9 +17,9 @@ import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 @Composable
 fun MyStoryApp(
     navController: NavHostController = rememberNavController(),
-
+    startDestination:String
     ) {
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.Login.route) {
             val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
