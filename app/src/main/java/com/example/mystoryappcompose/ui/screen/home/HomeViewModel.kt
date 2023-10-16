@@ -38,6 +38,7 @@ class HomeViewModel(
 
     fun logout(){
         viewModelScope.launch {
+            uiState = HomeUiState.Loading
             authTokenManager.clearTokens()
             authTokenManager.saveIsLoginState(false)
         }

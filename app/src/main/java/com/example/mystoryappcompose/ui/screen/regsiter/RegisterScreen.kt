@@ -1,5 +1,6 @@
 package com.example.mystoryappcompose.ui.screen.regsiter
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +46,7 @@ fun RegisterScreen(
     uiState: RegisterUiState,
     modifier: Modifier = Modifier,
     registerViewModel: RegisterViewModel = viewModel(factory = RegisterViewModel.Factory),
-//    navigateToLogin:() ->Unit
+    navigateToLogin:() ->Unit
 ) {
     val context = LocalContext.current
     when (uiState) {
@@ -55,7 +57,10 @@ fun RegisterScreen(
 
         is RegisterUiState.Loading -> LoadingScreen()
         is RegisterUiState.Success -> {
-            MToast(context, uiState.registerResponse.message)
+            LaunchedEffect(key1 = Unit ){
+                Toast.makeText(context, uiState.registerResponse.message, Toast.LENGTH_SHORT).show()
+                navigateToLogin()
+            }
         }
 
         is RegisterUiState.Error -> {
@@ -178,6 +183,7 @@ fun RegisterComponent(
             modifier = Modifier
                 .padding(top = 18.dp)
                 .padding(end = 52.dp)
+                .align(Alignment.End)
         ) {
             Text(text = "Register")
         }

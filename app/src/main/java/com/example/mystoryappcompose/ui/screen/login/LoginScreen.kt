@@ -1,6 +1,8 @@
 package com.example.mystoryappcompose.ui.screen.login
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,29 +48,39 @@ import com.example.mystoryappcompose.ui.component.MToast
 
 @Composable
 fun LoginScreen(
-    uiState:LoginUiState,
+    uiState: LoginUiState,
     loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory),
-    navigateToHome:() ->Unit
+    navigateToHome: () -> Unit,
+    navigateToRegister: () -> Unit
 ) {
-        val context = LocalContext.current
-        when (uiState) {
-            is LoginUiState.StandBy -> LoginComponent(
-                loginViewModel = loginViewModel,
-                navigateToHome = navigateToHome
-            )
+    val context = LocalContext.current
+    when (uiState) {
+        is LoginUiState.StandBy -> LoginComponent(
+            loginViewModel = loginViewModel,
+            navigateToHome = navigateToHome,
+            navigateToRegister = navigateToRegister
+        )
 
-            is LoginUiState.Loading -> LoadingScreen()
-            is LoginUiState.Success -> {
-                MToast(context, uiState.loginResponse.message)
+        is LoginUiState.Loading -> LoadingScreen()
+        is LoginUiState.Success -> {
+            LaunchedEffect(Unit) {
+
+                Toast.makeText(
+                    context,
+                    "Welcome ${uiState.loginResponse.loginResult.name}",
+                    Toast.LENGTH_LONG
+                ).show()
                 navigateToHome()
-                Log.d("LoginScreen", uiState.loginResponse.loginResult.token)
             }
 
-            is LoginUiState.Error -> {
-                MToast(context, uiState.msg)
-                loginViewModel.getUiState()
-            }
+            Log.d("LoginScreen", uiState.loginResponse.loginResult.token)
         }
+
+        is LoginUiState.Error -> {
+            MToast(context, uiState.msg)
+            loginViewModel.getUiState()
+        }
+    }
 
 }
 
@@ -76,8 +89,8 @@ fun LoginScreen(
 fun LoginComponent(
     loginViewModel: LoginViewModel,
     modifier: Modifier = Modifier,
-    navigateToHome: () -> Unit
-//    navigateToRegister: () -> Unit
+    navigateToHome: () -> Unit,
+    navigateToRegister: () -> Unit
 
 ) {
     var email by remember { mutableStateOf("") }
@@ -167,7 +180,7 @@ fun LoginComponent(
                 color = if (isEmailEmpty || isPasswordEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(start = 52.dp)
-//                    .clickable { navigateToRegister() }
+                    .clickable { navigateToRegister() }
             )
 
             Button(
@@ -175,7 +188,7 @@ fun LoginComponent(
                     when {
                         email.isEmpty() -> isEmailEmpty = true
                         password.isEmpty() -> isPasswordEmpty = true
-                        else ->  {
+                        else -> {
                             loginViewModel.login(
                                 email,
                                 password,

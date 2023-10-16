@@ -61,7 +61,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
 //  coil
-    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 //    viewModel
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
@@ -74,12 +74,12 @@ dependencies {
 //    icon
     implementation("androidx.compose.material:material-icons-extended:1.5.3")
 //    DataStore
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 //    SplashAPi
     implementation("androidx.core:core-splashscreen:1.0.1")
 //  Lottie
-    implementation ("com.airbnb.android:lottie-compose:6.1.0")
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
 
 
 

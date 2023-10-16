@@ -49,10 +49,10 @@ class AuthViewModel(
 //        }
 //    }
 
-    suspend fun getAccessToken():String {
-        return authTokenManager.getAccessToken().toString()
-
-    }
+//    suspend fun getAccessToken():String {
+//        return authTokenManager.getAccessToken().toString()
+//
+//    }
 
 //    fun removeAccessToken() {
 //        viewModelScope.launch {
