@@ -4,10 +4,8 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
-import androidx.exifinterface.media.ExifInterface
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -17,8 +15,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 object CameraUtils {
-    private val FILENAME_FORMAT = "dd-MM-yyyy"
-    private val MAXIMUM_SIZE = 1000000
+    private const val FILENAME_FORMAT = "dd-MM-yyyy"
+    private const val MAXIMUM_SIZE = 1000000
     private val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     private fun createCustomTempFile(context: Context): File {
@@ -26,22 +24,6 @@ object CameraUtils {
         return File.createTempFile(timeStamp, ".jpg", storageDir)
     }
 
-    fun rotateFile(file: File) {
-        val exif = ExifInterface(file.absolutePath)
-        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
-
-        val matrix = Matrix()
-        when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
-            else -> return // No need to rotate if the orientation is normal
-        }
-
-        val bitmap = BitmapFactory.decodeFile(file.path)
-        val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        result.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
-    }
 
     fun uriToFile(selectedImg: Uri, context: Context): File {
         val contentResolver: ContentResolver = context.contentResolver

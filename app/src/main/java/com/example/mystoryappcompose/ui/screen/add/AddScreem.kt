@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -79,7 +78,6 @@ fun AddScreenComponent() {
         }
     }
 
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -107,31 +105,33 @@ fun AddScreenComponent() {
 
 }
 
+
 @Composable
 fun DisplaySelectedImage(imageUri: Uri?, context: Context) {
-    if (imageUri != null) {
-        val bitmap = if (Build.VERSION.SDK_INT < 28) {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-        } else {
-            val source = ImageDecoder.createSource(context.contentResolver, imageUri)
-            ImageDecoder.decodeBitmap(source)
-        }
 
-        if (bitmap != null) {
+        if (imageUri != null) {
+            val source = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.createSource(context.contentResolver, imageUri)
+            } else {
+                TODO("VERSION.SDK_INT < P")
+            }
+            val bitmap = ImageDecoder.decodeBitmap(source)
+
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.size(400.dp)
             )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_image),
+                contentDescription = null,
+                modifier = Modifier.size(400.dp)
+            )
         }
-    } else {
-        Image(
-            painter = painterResource(id = R.drawable.ic_image),
-            contentDescription = null,
-            modifier = Modifier.size(400.dp)
-        )
-    }
+
 }
+
 
 fun openGallery(launcher: ActivityResultLauncher<String>) {
     launcher.launch("image/*")
@@ -142,10 +142,9 @@ fun Context.createImageFile(): File {
     // Create an image file name
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
     val imageFileName = "JPEG_" + timeStamp + "_"
-    val image = File.createTempFile(
+    return File.createTempFile(
         imageFileName, /* prefix */
         ".jpg", /* suffix */
         externalCacheDir      /* directory */
     )
-    return image
 }
