@@ -29,6 +29,7 @@ import com.example.mystoryappcompose.preferences.AuthViewModel
 import com.example.mystoryappcompose.ui.common.HomeUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
+import com.example.mystoryappcompose.ui.component.MyFloatingActionButton
 import com.example.mystoryappcompose.ui.component.StoryItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,8 +40,10 @@ fun HomeScreen(
     authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory),
     navigateToLogin: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
+    navigateToAdd: () -> Unit
 
-    ) {
+
+) {
     val isLogin by authViewModel.loginState.collectAsState()
     if (isLogin) {
         LaunchedEffect(Unit) {
@@ -57,7 +60,9 @@ fun HomeScreen(
                 uiState.getStoriesResponse.listStory,
                 scrollBehavior = scrollBehavior,
                 navigateToLogin = navigateToLogin,
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                navigateToAdd = navigateToAdd
+
             )
         }
 
@@ -72,6 +77,7 @@ fun HomeScreenContent(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
     homeViewModel: HomeViewModel,
+    navigateToAdd: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -81,6 +87,7 @@ fun HomeScreenContent(
                 homeViewModel = homeViewModel
             )
         },
+        floatingActionButton = { MyFloatingActionButton(navigateToAdd = {navigateToAdd()}) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         Surface(modifier = Modifier.padding(it)) {

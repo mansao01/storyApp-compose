@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mystoryappcompose.ui.navigation.Screen
+import com.example.mystoryappcompose.ui.screen.add.AddScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeViewModel
 import com.example.mystoryappcompose.ui.screen.login.LoginScreen
@@ -47,6 +48,9 @@ fun MyStoryApp(
                 navigateToLogin = {
                     navController.navigate(Screen.Login.route)
                     navController.popBackStack()
+                },
+                navigateToAdd = {
+                    navController.navigate(Screen.Add.route)
                 }
             )
         }
@@ -59,6 +63,9 @@ fun MyStoryApp(
             })
         }
 
+        composable(Screen.Add.route){
+            AddScreen()
+        }
     }
 
 }

@@ -9,4 +9,7 @@
     <string name="show_password">show password</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
+    <string name="capture_image">Capture image</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="pick_image">Gallery</string>
 </resources>
