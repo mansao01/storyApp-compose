@@ -6,10 +6,12 @@ import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,12 +39,14 @@ import java.util.Date
 import java.util.Locale
 
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun AddScreen() {
     AddScreenComponent()
 
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun AddScreenComponent() {
     val context = LocalContext.current
@@ -51,19 +55,25 @@ fun AddScreenComponent() {
 
     var galleryImageUri by remember { mutableStateOf<Uri?>(null) }
     var captureImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isImageSelected by remember { mutableStateOf(false) }
+
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         galleryImageUri = uri
+        isImageSelected = true
+
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
-    ){isSuccess ->
-        if (isSuccess){
+    ) { isSuccess ->
+        if (isSuccess) {
             captureImageUri = cameraUri
+            isImageSelected = true
+
         }
     }
 
@@ -84,21 +94,32 @@ fun AddScreenComponent() {
     ) {
 
         DisplaySelectedImage(imageUri = galleryImageUri ?: captureImageUri, context = context)
-        Row {
-            Button(onClick = { openGallery(launcher = galleryLauncher) }) {
-                Text(text = "Open Gallery")
-            }
+        if (isImageSelected) {
             Button(onClick = {
-                val permissionCheckResult =
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                    cameraLauncher.launch(cameraUri)
-                } else {
-                    // Request a permission
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                }
+                captureImageUri = null
+                galleryImageUri = null
+                isImageSelected = false
             }) {
-                Text(text = "Open Camera")
+                Text(text = "Remove Image")
+            }
+        }else{
+            Row {
+                Button(onClick = {
+                    openGallery(launcher = galleryLauncher)
+                }) {
+                    Text(text = "Open Gallery")
+                }
+                Button(onClick = {
+                    val permissionCheckResult =
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                        cameraLauncher.launch(cameraUri)
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }) {
+                    Text(text = "Open Camera")
+                }
             }
         }
     }
@@ -109,26 +130,25 @@ fun AddScreenComponent() {
 @Composable
 fun DisplaySelectedImage(imageUri: Uri?, context: Context) {
 
-        if (imageUri != null) {
-            val source = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.createSource(context.contentResolver, imageUri)
-            } else {
-                TODO("VERSION.SDK_INT < P")
-            }
-            val bitmap = ImageDecoder.decodeBitmap(source)
-
-            Image(
-                bitmap = bitmap.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier.size(400.dp)
-            )
+    if (imageUri != null) {
+        val bitmap = if (Build.VERSION.SDK_INT < 28) {
+            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
         } else {
-            Image(
-                painter = painterResource(id = R.drawable.ic_image),
-                contentDescription = null,
-                modifier = Modifier.size(400.dp)
-            )
+            val source = ImageDecoder.createSource(context.contentResolver, imageUri)
+            ImageDecoder.decodeBitmap(source)
         }
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = null,
+            modifier = Modifier.size(400.dp)
+        )
+    } else {
+        Image(
+            painter = painterResource(id = R.drawable.ic_image),
+            contentDescription = null,
+            modifier = Modifier.size(400.dp)
+        )
+    }
 
 }
 

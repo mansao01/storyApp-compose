@@ -1,5 +1,7 @@
 package com.example.mystoryappcompose.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import com.example.mystoryappcompose.ui.screen.login.LoginViewModel
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterScreen
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 
+@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyStoryApp(
