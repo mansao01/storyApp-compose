@@ -1,10 +1,13 @@
 package com.example.mystoryappcompose.ui.screen.add
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,7 +29,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.example.mystoryappcompose.R
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
@@ -38,8 +47,11 @@ fun AddScreen() {
 @Composable
 fun AddScreenComponent() {
     val context = LocalContext.current
-    var galleryImageUri by remember { mutableStateOf<Uri?>(null)}
-    var captureImageUri by remember{ mutableStateOf<Uri>(Uri.EMPTY) }
+    val file = context.createImageFile()
+    val cameraUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+
+    var galleryImageUri by remember { mutableStateOf<Uri?>(null) }
+    var captureImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract =
@@ -48,18 +60,46 @@ fun AddScreenComponent() {
         galleryImageUri = uri
     }
 
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+    ){isSuccess ->
+        if (isSuccess){
+            captureImageUri = cameraUri
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(cameraUri)
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
 
-        DisplaySelectedImage(imageUri = galleryImageUri, context = context)
+        DisplaySelectedImage(imageUri = galleryImageUri ?: captureImageUri, context = context)
         Row {
             Button(onClick = { openGallery(launcher = galleryLauncher) }) {
                 Text(text = "Open Gallery")
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                val permissionCheckResult =
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                    cameraLauncher.launch(cameraUri)
+                } else {
+                    // Request a permission
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }) {
                 Text(text = "Open Camera")
             }
         }
@@ -95,4 +135,17 @@ fun DisplaySelectedImage(imageUri: Uri?, context: Context) {
 
 fun openGallery(launcher: ActivityResultLauncher<String>) {
     launcher.launch("image/*")
+}
+
+
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
 }
