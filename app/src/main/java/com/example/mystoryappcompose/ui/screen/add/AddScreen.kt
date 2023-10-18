@@ -69,7 +69,7 @@ fun AddScreen(
         }
 
         is AddUiState.Error -> {
-            MToast(context = context, message = uiState.msg.toString())
+            MToast(context = context, message = uiState.msg)
             addViewModel.updateUiState()
         }
     }
@@ -210,10 +210,13 @@ fun UploadFile(
     val context = LocalContext.current
     val isButtonEnable = (description.isNotEmpty() && imageUri != null)
     val myFile = imageUri?.let { CameraUtils.uriToFile(it, context) }
+    val rotatedFile  = myFile?.let { file ->
+        CameraUtils.rotateFile(file)
+    }
 
     Button(
         onClick = {
-            myFile?.let {
+            rotatedFile?.let {
                 addViewModel.postStory(it, description)
             }
         },

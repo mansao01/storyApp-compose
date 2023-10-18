@@ -72,8 +72,8 @@ fun MyStoryApp(
             AddScreen(
                 uiState = addViewModel.uiState,
                 navigateToHome = {
-                    navController.navigate(Screen.Home.route)
                     navController.popBackStack()
+                    navController.navigate(Screen.Home.route)
                 })
         }
     }

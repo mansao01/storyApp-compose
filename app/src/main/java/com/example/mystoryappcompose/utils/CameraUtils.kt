@@ -19,28 +19,35 @@ import java.util.Locale
 object CameraUtils {
     private const val FILENAME_FORMAT = "dd-MM-yyyy"
     private const val MAXIMUM_SIZE = 1000000
-    private val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
+    private val timeStamp =
+        SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     private fun createCustomTempFile(context: Context): File {
         val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(timeStamp, ".jpg", storageDir)
     }
 
-    fun rotateFile(file: File) {
+    fun rotateFile(file: File): File {
         val exif = ExifInterface(file.absolutePath)
-        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
+        val orientation =
+            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
 
         val matrix = Matrix()
         when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
             ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
             ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
-            else -> return // No need to rotate if the orientation is normal
+            else -> return file // No need to rotate if the orientation is normal
         }
 
         val bitmap = BitmapFactory.decodeFile(file.path)
         val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        result.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
+
+        val outputStream = FileOutputStream(file)
+        result.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.close()
+
+        return file
     }
 
     fun uriToFile(selectedImg: Uri, context: Context): File {
