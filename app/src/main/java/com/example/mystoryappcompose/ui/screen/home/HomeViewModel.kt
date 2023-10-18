@@ -21,8 +21,6 @@ class HomeViewModel(
     var uiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
 
-
-
       fun getStories(){
         viewModelScope.launch {
             uiState = HomeUiState.Loading

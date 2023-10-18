@@ -15,9 +15,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +41,7 @@ import com.example.mystoryappcompose.R
 import com.example.mystoryappcompose.ui.common.AddUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
+import com.example.mystoryappcompose.utils.CameraUtils
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -54,7 +58,7 @@ fun AddScreen(
     val context = LocalContext.current
 
     when (uiState) {
-        is AddUiState.StandBy -> AddScreenComponent()
+        is AddUiState.StandBy -> AddScreenComponent(addViewModel = addViewModel)
         is AddUiState.Loading -> LoadingScreen()
         is AddUiState.Success -> {
             LaunchedEffect(key1 = Unit) {
@@ -74,7 +78,9 @@ fun AddScreen(
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun AddScreenComponent() {
+fun AddScreenComponent(
+    addViewModel: AddViewModel
+) {
     val context = LocalContext.current
     val file = context.createImageFile()
     val cameraUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
@@ -82,6 +88,7 @@ fun AddScreenComponent() {
     var galleryImageUri by remember { mutableStateOf<Uri?>(null) }
     var captureImageUri by remember { mutableStateOf<Uri?>(null) }
     var isImageSelected by remember { mutableStateOf(false) }
+    var description by remember { mutableStateOf("") }
 
 
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -129,6 +136,7 @@ fun AddScreenComponent() {
                 Text(text = "Remove Image")
             }
         } else {
+
             Row {
                 Button(onClick = {
                     openGallery(launcher = galleryLauncher)
@@ -146,8 +154,23 @@ fun AddScreenComponent() {
                 }) {
                     Text(text = "Open Camera")
                 }
+
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text(text = "Description") },
+            isError = description.isEmpty()
+        )
+
+        UploadFile(
+            imageUri = galleryImageUri ?: captureImageUri,
+            description = description,
+            addViewModel = addViewModel
+        )
     }
 
 }
@@ -176,6 +199,30 @@ fun DisplaySelectedImage(imageUri: Uri?, context: Context) {
         )
     }
 
+}
+
+@Composable
+fun UploadFile(
+    imageUri: Uri?,
+    description: String,
+    addViewModel: AddViewModel
+) {
+    var isButtonEnable by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    isButtonEnable = when {
+        description.isEmpty() -> false
+        imageUri == null -> false
+        else -> true
+    }
+    val myFile = imageUri?.let { CameraUtils.uriToFile(it, context) }
+    Button(onClick = {
+        addViewModel.postStory(
+            myFile!!,
+            description
+        )
+    }) {
+        Text(text = "Upload")
+    }
 }
 
 
