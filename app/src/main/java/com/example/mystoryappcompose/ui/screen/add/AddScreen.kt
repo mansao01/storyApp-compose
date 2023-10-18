@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +33,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mystoryappcompose.R
+import com.example.mystoryappcompose.ui.common.AddUiState
+import com.example.mystoryappcompose.ui.component.LoadingScreen
+import com.example.mystoryappcompose.ui.component.MToast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,8 +46,29 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun AddScreen() {
-    AddScreenComponent()
+fun AddScreen(
+    uiState: AddUiState,
+    addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory),
+    navigateToHome: () -> Unit
+) {
+    val context = LocalContext.current
+
+    when (uiState) {
+        is AddUiState.StandBy -> AddScreenComponent()
+        is AddUiState.Loading -> LoadingScreen()
+        is AddUiState.Success -> {
+            LaunchedEffect(key1 = Unit) {
+                Toast.makeText(context, uiState.postStoryResponse.message, Toast.LENGTH_SHORT)
+                    .show()
+                navigateToHome()
+            }
+        }
+
+        is AddUiState.Error -> {
+            MToast(context = context, message = uiState.msg.toString())
+            addViewModel.updateUiState()
+        }
+    }
 
 }
 
@@ -102,7 +128,7 @@ fun AddScreenComponent() {
             }) {
                 Text(text = "Remove Image")
             }
-        }else{
+        } else {
             Row {
                 Button(onClick = {
                     openGallery(launcher = galleryLauncher)

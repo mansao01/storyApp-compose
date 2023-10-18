@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mystoryappcompose.ui.navigation.Screen
 import com.example.mystoryappcompose.ui.screen.add.AddScreen
+import com.example.mystoryappcompose.ui.screen.add.AddViewModel
 import com.example.mystoryappcompose.ui.screen.home.HomeScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeViewModel
 import com.example.mystoryappcompose.ui.screen.login.LoginScreen
@@ -66,8 +67,14 @@ fun MyStoryApp(
             })
         }
 
-        composable(Screen.Add.route){
-            AddScreen()
+        composable(Screen.Add.route) {
+            val addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory)
+            AddScreen(
+                uiState = addViewModel.uiState,
+                navigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                    navController.popBackStack()
+                })
         }
     }
 
