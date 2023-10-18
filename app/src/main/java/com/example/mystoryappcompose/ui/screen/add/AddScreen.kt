@@ -64,8 +64,8 @@ fun AddScreen(
             LaunchedEffect(key1 = Unit) {
                 Toast.makeText(context, uiState.postStoryResponse.message, Toast.LENGTH_SHORT)
                     .show()
-                navigateToHome()
             }
+            navigateToHome()
         }
 
         is AddUiState.Error -> {
@@ -207,23 +207,22 @@ fun UploadFile(
     description: String,
     addViewModel: AddViewModel
 ) {
-    var isButtonEnable by remember { mutableStateOf(true) }
     val context = LocalContext.current
-    isButtonEnable = when {
-        description.isEmpty() -> false
-        imageUri == null -> false
-        else -> true
-    }
+    val isButtonEnable = (description.isNotEmpty() && imageUri != null)
     val myFile = imageUri?.let { CameraUtils.uriToFile(it, context) }
-    Button(onClick = {
-        addViewModel.postStory(
-            myFile!!,
-            description
-        )
-    }) {
+
+    Button(
+        onClick = {
+            myFile?.let {
+                addViewModel.postStory(it, description)
+            }
+        },
+        enabled = isButtonEnable
+    ) {
         Text(text = "Upload")
     }
 }
+
 
 
 fun openGallery(launcher: ActivityResultLauncher<String>) {

@@ -51,7 +51,6 @@ fun HomeScreen(
         }
     }
 
-
     val context = LocalContext.current
     when (uiState) {
         is HomeUiState.Loading -> LoadingScreen()
