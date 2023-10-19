@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -125,7 +127,6 @@ fun AddScreenComponent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-
         DisplaySelectedImage(imageUri = galleryImageUri ?: captureImageUri, context = context)
         if (isImageSelected) {
             Button(onClick = {
@@ -136,7 +137,6 @@ fun AddScreenComponent(
                 Text(text = "Remove Image")
             }
         } else {
-
             Row {
                 Button(onClick = {
                     openGallery(launcher = galleryLauncher)
@@ -154,7 +154,6 @@ fun AddScreenComponent(
                 }) {
                     Text(text = "Open Camera")
                 }
-
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -165,6 +164,7 @@ fun AddScreenComponent(
             label = { Text(text = "Description") },
             isError = description.isEmpty()
         )
+        Spacer(modifier = Modifier.height(16.dp))
 
         UploadFile(
             imageUri = galleryImageUri ?: captureImageUri,
@@ -172,6 +172,7 @@ fun AddScreenComponent(
             addViewModel = addViewModel
         )
     }
+
 
 }
 
@@ -205,12 +206,12 @@ fun DisplaySelectedImage(imageUri: Uri?, context: Context) {
 fun UploadFile(
     imageUri: Uri?,
     description: String,
-    addViewModel: AddViewModel
+    addViewModel: AddViewModel,
 ) {
     val context = LocalContext.current
     val isButtonEnable = (description.isNotEmpty() && imageUri != null)
     val myFile = imageUri?.let { CameraUtils.uriToFile(it, context) }
-    val rotatedFile  = myFile?.let { file ->
+    val rotatedFile = myFile?.let { file ->
         CameraUtils.rotateFile(file)
     }
 
@@ -220,12 +221,14 @@ fun UploadFile(
                 addViewModel.postStory(it, description)
             }
         },
-        enabled = isButtonEnable
+        enabled = isButtonEnable,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
         Text(text = "Upload")
     }
 }
-
 
 
 fun openGallery(launcher: ActivityResultLauncher<String>) {

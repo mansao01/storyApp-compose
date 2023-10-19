@@ -24,7 +24,7 @@ sealed interface LoginUiState {
 
 sealed interface HomeUiState {
     object Loading : HomeUiState
-    data class Success(val getStoriesResponse: GetStoriesResponse) : HomeUiState
+    data class Success(val getStoriesResponse: GetStoriesResponse, val username:String) : HomeUiState
     data class Error(val msg: String) : HomeUiState
 
 }

@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mystoryappcompose.ui.navigation.Screen
 import com.example.mystoryappcompose.ui.screen.add.AddScreen
 import com.example.mystoryappcompose.ui.screen.add.AddViewModel
+import com.example.mystoryappcompose.ui.screen.detail.DetailScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeViewModel
 import com.example.mystoryappcompose.ui.screen.login.LoginScreen
@@ -28,6 +29,7 @@ fun MyStoryApp(
     startDestination: String,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val sharedViewModel:SharedViewModel = viewModel()
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.Login.route) {
@@ -55,6 +57,10 @@ fun MyStoryApp(
                 },
                 navigateToAdd = {
                     navController.navigate(Screen.Add.route)
+                },
+                sharedViewModel = sharedViewModel,
+                navigateToDetail = {
+                    navController.navigate(Screen.Detail.route)
                 }
             )
         }
@@ -75,6 +81,10 @@ fun MyStoryApp(
                     navController.popBackStack()
                     navController.navigate(Screen.Home.route)
                 })
+        }
+
+        composable(Screen.Detail.route ) {
+            DetailScreen(sharedViewModel = sharedViewModel)
         }
     }
 

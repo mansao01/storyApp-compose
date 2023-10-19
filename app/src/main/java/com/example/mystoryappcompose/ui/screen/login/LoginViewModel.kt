@@ -34,6 +34,7 @@ class LoginViewModel(
                 val result = myStoryRepository.login(email, password)
                 authTokenManager.saveAccessToken(result.loginResult.token)
                 authTokenManager.saveIsLoginState(true)
+                authTokenManager.saveUsername(result.loginResult.name)
                 LoginUiState.Success(result)
 
             } catch (e: Exception) {

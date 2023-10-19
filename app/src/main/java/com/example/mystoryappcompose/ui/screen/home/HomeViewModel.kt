@@ -26,7 +26,8 @@ class HomeViewModel(
             uiState = HomeUiState.Loading
             uiState = try {
                 val result = myStoryRepository.getStories("Bearer ${authTokenManager.getAccessToken()}")
-                HomeUiState.Success(result)
+                val username = authTokenManager.getUsername()
+                HomeUiState.Success(result, username!!)
             }catch (e:Exception){
 
                 HomeUiState.Error(e.toString())
@@ -39,6 +40,7 @@ class HomeViewModel(
             uiState = HomeUiState.Loading
             authTokenManager.clearTokens()
             authTokenManager.saveIsLoginState(false)
+            authTokenManager.clearUsername()
         }
     }
     companion object {

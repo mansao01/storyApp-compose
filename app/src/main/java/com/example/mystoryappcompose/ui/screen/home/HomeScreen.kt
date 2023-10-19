@@ -26,6 +26,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
 import com.example.mystoryappcompose.data.network.response.ListStoryItem
 import com.example.mystoryappcompose.preferences.AuthViewModel
+import com.example.mystoryappcompose.ui.SharedViewModel
 import com.example.mystoryappcompose.ui.common.HomeUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
@@ -40,8 +41,9 @@ fun HomeScreen(
     authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory),
     navigateToLogin: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
-    navigateToAdd: () -> Unit
-
+    navigateToAdd: () -> Unit,
+    sharedViewModel: SharedViewModel,
+    navigateToDetail: () -> Unit
 
 ) {
     val isLogin by authViewModel.loginState.collectAsState()
@@ -60,8 +62,10 @@ fun HomeScreen(
                 scrollBehavior = scrollBehavior,
                 navigateToLogin = navigateToLogin,
                 homeViewModel = homeViewModel,
-                navigateToAdd = navigateToAdd
-
+                navigateToAdd = navigateToAdd,
+                navigateToDetail = navigateToDetail,
+                sharedViewModel = sharedViewModel,
+                username = uiState.username
             )
         }
 
@@ -76,21 +80,29 @@ fun HomeScreenContent(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
     homeViewModel: HomeViewModel,
-    navigateToAdd: () -> Unit
+    navigateToAdd: () -> Unit,
+    navigateToDetail: () -> Unit,
+    sharedViewModel: SharedViewModel,
+    username:String
 ) {
     Scaffold(
         topBar = {
             HomeTopBar(
                 scrollBehavior = scrollBehavior,
                 navigateToLogin = { navigateToLogin() },
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                username = username
             )
         },
-        floatingActionButton = { MyFloatingActionButton(navigateToAdd = {navigateToAdd()}) },
+        floatingActionButton = { MyFloatingActionButton(navigateToAdd = { navigateToAdd() }) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         Surface(modifier = Modifier.padding(it)) {
-            StoryList(storyList = storyList)
+            StoryList(
+                storyList = storyList,
+                sharedViewModel = sharedViewModel,
+                navigateToDetail = navigateToDetail
+            )
         }
 
     }
@@ -99,11 +111,16 @@ fun HomeScreenContent(
 @Composable
 fun StoryList(
     storyList: List<ListStoryItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    sharedViewModel: SharedViewModel,
+    navigateToDetail: () -> Unit
 ) {
-    LazyColumn() {
+    LazyColumn {
         items(storyList) { data ->
-            StoryItem(story = data, modifier = modifier.clickable { })
+            StoryItem(story = data, modifier = modifier.clickable {
+                sharedViewModel.addStory(newStory = data)
+                navigateToDetail()
+            })
         }
     }
 }
@@ -114,11 +131,12 @@ fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
     homeViewModel: HomeViewModel,
+    username: String
 ) {
     val context = LocalContext.current
     LargeTopAppBar(
         scrollBehavior = scrollBehavior,
-        title = { Text(text = "Welcome") },
+        title = { Text(text = "Welcome, $username") },
         actions = {
             IconButton(onClick = {
                 context.imageLoader.memoryCache?.clear()

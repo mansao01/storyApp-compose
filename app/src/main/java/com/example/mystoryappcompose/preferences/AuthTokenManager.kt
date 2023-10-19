@@ -14,6 +14,7 @@ import java.io.IOException
 
 class AuthTokenManager(private val dataStore: DataStore<Preferences>) {
     private val accessTokenKey = stringPreferencesKey("access_token")
+    private val username = stringPreferencesKey("username")
     private val isLoginState = booleanPreferencesKey("is_login")
 
     suspend fun saveAccessToken(token: String) {
@@ -28,7 +29,11 @@ class AuthTokenManager(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-
+    suspend fun saveUsername(userName:String){
+        dataStore.edit { preferences ->
+            preferences[username] = userName
+        }
+    }
 
     fun getIsLoginState(): Flow<Boolean> {
         return dataStore.data
@@ -50,10 +55,20 @@ class AuthTokenManager(private val dataStore: DataStore<Preferences>) {
         return preferences[accessTokenKey]
     }
 
+    suspend fun getUsername():String?{
+        val preferences = dataStore.data.first()
+        return preferences[username]
+    }
 
     suspend fun clearTokens() {
         dataStore.edit { preferences ->
             preferences.remove(accessTokenKey)
+        }
+    }
+
+    suspend fun clearUsername() {
+        dataStore.edit { preferences ->
+            preferences.remove(username)
         }
     }
 }
