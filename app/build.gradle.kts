@@ -19,6 +19,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "mapKey", "\"AIzaSyBX2_SZ7FXdT8ALdVaALYfaed7pl39LpII\"")
     }
 
     buildTypes {
@@ -85,6 +86,10 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.1.0")
 
     implementation("androidx.exifinterface:exifinterface:1.3.6")
+
+//    maps
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.2.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

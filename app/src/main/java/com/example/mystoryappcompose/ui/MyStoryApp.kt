@@ -18,6 +18,7 @@ import com.example.mystoryappcompose.ui.screen.home.HomeScreen
 import com.example.mystoryappcompose.ui.screen.home.HomeViewModel
 import com.example.mystoryappcompose.ui.screen.login.LoginScreen
 import com.example.mystoryappcompose.ui.screen.login.LoginViewModel
+import com.example.mystoryappcompose.ui.screen.map.MapScreen
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterScreen
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 
@@ -61,6 +62,9 @@ fun MyStoryApp(
                 sharedViewModel = sharedViewModel,
                 navigateToDetail = {
                     navController.navigate(Screen.Detail.route)
+                },
+                navigateToMap = {
+                    navController.navigate(Screen.Map.route)
                 }
             )
         }
@@ -89,6 +93,10 @@ fun MyStoryApp(
                 navigateToHome = { navController.navigate(Screen.Home.route) },
                 scrollBehavior = scrollBehavior
             )
+        }
+
+        composable(Screen.Map.route){
+            MapScreen()
         }
     }
 

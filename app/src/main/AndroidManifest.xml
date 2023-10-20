@@ -9,6 +9,7 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
+
     <application
         android:allowBackup="true"
         android:name=".MyStoryApplication"
@@ -21,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyStoryAppCompose"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -42,6 +44,11 @@
                 android:resource="@xml/file_paths" />
 
         </provider>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBX2_SZ7FXdT8ALdVaALYfaed7pl39LpII" />
+
     </application>
 
 </manifest>

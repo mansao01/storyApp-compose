@@ -1,6 +1,7 @@
 package com.example.mystoryappcompose.ui.screen.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
+import com.example.mystoryappcompose.BuildConfig
 import com.example.mystoryappcompose.data.network.response.ListStoryItem
 import com.example.mystoryappcompose.preferences.AuthViewModel
 import com.example.mystoryappcompose.ui.SharedViewModel
@@ -46,7 +49,9 @@ fun HomeScreen(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
     navigateToAdd: () -> Unit,
-    navigateToDetail: () -> Unit
+    navigateToDetail: () -> Unit,
+    navigateToMap: () -> Unit
+
 ) {
     val isLogin by authViewModel.loginState.collectAsState()
     if (isLogin) {
@@ -55,6 +60,8 @@ fun HomeScreen(
         }
     }
 
+    val mapKey = BuildConfig.mapKey
+    Log.d("Map key", mapKey)
     val context = LocalContext.current
     when (uiState) {
         is HomeUiState.Loading -> LoadingScreen()
@@ -67,7 +74,8 @@ fun HomeScreen(
                 navigateToAdd = navigateToAdd,
                 navigateToDetail = navigateToDetail,
                 sharedViewModel = sharedViewModel,
-                username = uiState.username
+                username = uiState.username,
+                navigateToMap = navigateToMap
             )
         }
 
@@ -86,7 +94,8 @@ fun HomeScreenContent(
     navigateToAdd: () -> Unit,
     navigateToDetail: () -> Unit,
     sharedViewModel: SharedViewModel,
-    username:String
+    username:String,
+    navigateToMap: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -94,7 +103,8 @@ fun HomeScreenContent(
                 scrollBehavior = scrollBehavior,
                 navigateToLogin = { navigateToLogin() },
                 homeViewModel = homeViewModel,
-                username = username
+                username = username,
+                navigateToMap = navigateToMap
             )
         },
         floatingActionButton = { MyFloatingActionButton(navigateToAdd = { navigateToAdd() }) },
@@ -134,6 +144,7 @@ fun StoryList(
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
+    navigateToMap:() ->Unit,
     homeViewModel: HomeViewModel,
     username: String
 ) {
@@ -149,6 +160,12 @@ fun HomeTopBar(
             }) {
                 Icon(imageVector = Icons.Default.Logout, contentDescription = "Logout")
             }
+            IconButton(onClick = {
+                navigateToMap()
+            }) {
+                Icon(imageVector = Icons.Default.Map, contentDescription = "Maps")
+            }
+
         }
     )
 }
