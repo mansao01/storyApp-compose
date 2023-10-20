@@ -1,6 +1,7 @@
 package com.example.mystoryappcompose.ui.common
 
 import com.example.mystoryappcompose.data.network.response.GetStoriesResponse
+import com.example.mystoryappcompose.data.network.response.GetStoriesWithLocationResponse
 import com.example.mystoryappcompose.data.network.response.LoginResponse
 import com.example.mystoryappcompose.data.network.response.PostStoryResponse
 import com.example.mystoryappcompose.data.network.response.RegisterResponse
@@ -24,8 +25,19 @@ sealed interface LoginUiState {
 
 sealed interface HomeUiState {
     object Loading : HomeUiState
-    data class Success(val getStoriesResponse: GetStoriesResponse, val username:String) : HomeUiState
+    data class Success(val getStoriesResponse: GetStoriesResponse, val username: String) :
+        HomeUiState
+
     data class Error(val msg: String) : HomeUiState
+
+}
+
+sealed interface MapUiState {
+    object Loading : MapUiState
+    data class Success(val getStoriesWithLocationResponse: GetStoriesWithLocationResponse) :
+        MapUiState
+
+    data class Error(val msg: String) : MapUiState
 
 }
 

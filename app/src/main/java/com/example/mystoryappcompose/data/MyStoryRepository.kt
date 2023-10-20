@@ -2,6 +2,7 @@ package com.example.mystoryappcompose.data
 
 import com.example.mystoryappcompose.data.network.ApiService
 import com.example.mystoryappcompose.data.network.response.GetStoriesResponse
+import com.example.mystoryappcompose.data.network.response.GetStoriesWithLocationResponse
 import com.example.mystoryappcompose.data.network.response.LoginResponse
 import com.example.mystoryappcompose.data.network.response.PostStoryResponse
 import com.example.mystoryappcompose.data.network.response.RegisterResponse
@@ -16,6 +17,7 @@ interface MyStoryRepository {
     suspend fun register(name: String, email: String, password: String): RegisterResponse
     suspend fun login(email: String, password: String): LoginResponse
     suspend fun getStories(token: String): GetStoriesResponse
+    suspend fun getStoriesWithLocation(token: String): GetStoriesWithLocationResponse
     suspend fun postStory(token:String, getFile:File, description:String): PostStoryResponse
 }
 
@@ -32,6 +34,10 @@ class NetworkMyStoryRepository(
 
     override suspend fun getStories(token: String): GetStoriesResponse {
         return apiService.getStories(token)
+    }
+
+    override suspend fun getStoriesWithLocation(token: String): GetStoriesWithLocationResponse {
+        return apiService.getStoriesWithLocation(token)
     }
 
     override suspend fun postStory(token: String, getFile: File, description: String):PostStoryResponse {

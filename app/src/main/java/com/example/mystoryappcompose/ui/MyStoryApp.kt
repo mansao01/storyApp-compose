@@ -19,6 +19,7 @@ import com.example.mystoryappcompose.ui.screen.home.HomeViewModel
 import com.example.mystoryappcompose.ui.screen.login.LoginScreen
 import com.example.mystoryappcompose.ui.screen.login.LoginViewModel
 import com.example.mystoryappcompose.ui.screen.map.MapScreen
+import com.example.mystoryappcompose.ui.screen.map.MapViewModel
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterScreen
 import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 
@@ -95,8 +96,9 @@ fun MyStoryApp(
             )
         }
 
-        composable(Screen.Map.route){
-            MapScreen()
+        composable(Screen.Map.route) {
+            val mapViewModel: MapViewModel = viewModel(factory = MapViewModel.Factory)
+            MapScreen(uiState = mapViewModel.uiState)
         }
     }
 
