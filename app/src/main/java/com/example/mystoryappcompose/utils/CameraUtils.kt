@@ -37,7 +37,7 @@ object CameraUtils {
             ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
             ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
             ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
-            else -> return file // No need to rotate if the orientation is normal
+            else -> return file
         }
 
         val bitmap = BitmapFactory.decodeFile(file.path)

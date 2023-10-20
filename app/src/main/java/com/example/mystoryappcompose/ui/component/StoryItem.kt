@@ -62,9 +62,9 @@ fun StoryItem(
 
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = DateFormatter.formatDate(story.createdAt, TimeZone.getDefault().id),
+                text = DateFormatter.formatDate(story .createdAt, TimeZone.getDefault().id),
                 fontStyle = FontStyle.Italic,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -78,7 +78,7 @@ fun StoryItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
             )
 
         }

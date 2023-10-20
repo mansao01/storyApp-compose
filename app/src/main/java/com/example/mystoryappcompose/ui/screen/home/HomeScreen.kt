@@ -1,5 +1,7 @@
 package com.example.mystoryappcompose.ui.screen.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,18 +35,18 @@ import com.example.mystoryappcompose.ui.component.MToast
 import com.example.mystoryappcompose.ui.component.MyFloatingActionButton
 import com.example.mystoryappcompose.ui.component.StoryItem
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory),
-    navigateToLogin: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
-    navigateToAdd: () -> Unit,
     sharedViewModel: SharedViewModel,
+    scrollBehavior: TopAppBarScrollBehavior,
+    navigateToLogin: () -> Unit,
+    navigateToAdd: () -> Unit,
     navigateToDetail: () -> Unit
-
 ) {
     val isLogin by authViewModel.loginState.collectAsState()
     if (isLogin) {
@@ -73,6 +75,7 @@ fun HomeScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
@@ -108,6 +111,7 @@ fun HomeScreenContent(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StoryList(
     storyList: List<ListStoryItem>,
@@ -116,7 +120,7 @@ fun StoryList(
     navigateToDetail: () -> Unit
 ) {
     LazyColumn {
-        items(storyList) { data ->
+        items(storyList, key = {it.id}) { data ->
             StoryItem(story = data, modifier = modifier.clickable {
                 sharedViewModel.addStory(newStory = data)
                 navigateToDetail()

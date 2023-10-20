@@ -29,7 +29,7 @@ fun MyStoryApp(
     startDestination: String,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val sharedViewModel:SharedViewModel = viewModel()
+    val sharedViewModel: SharedViewModel = viewModel()
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.Login.route) {
@@ -83,8 +83,12 @@ fun MyStoryApp(
                 })
         }
 
-        composable(Screen.Detail.route ) {
-            DetailScreen(sharedViewModel = sharedViewModel)
+        composable(Screen.Detail.route) {
+            DetailScreen(
+                sharedViewModel = sharedViewModel,
+                navigateToHome = { navController.navigate(Screen.Home.route) },
+                scrollBehavior = scrollBehavior
+            )
         }
     }
 
