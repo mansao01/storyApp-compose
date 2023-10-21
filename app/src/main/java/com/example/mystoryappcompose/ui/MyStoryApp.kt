@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mystoryappcompose.data.model.LocationModel
 import com.example.mystoryappcompose.ui.navigation.Screen
 import com.example.mystoryappcompose.ui.screen.add.AddScreen
 import com.example.mystoryappcompose.ui.screen.add.AddViewModel
@@ -29,6 +30,7 @@ import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 fun MyStoryApp(
     navController: NavHostController = rememberNavController(),
     startDestination: String,
+    location:LocationModel
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val sharedViewModel: SharedViewModel = viewModel()
@@ -98,7 +100,7 @@ fun MyStoryApp(
 
         composable(Screen.Map.route) {
             val mapViewModel: MapViewModel = viewModel(factory = MapViewModel.Factory)
-            MapScreen(uiState = mapViewModel.uiState)
+            MapScreen(uiState = mapViewModel.uiState, location = location)
         }
     }
 
