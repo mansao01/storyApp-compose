@@ -2,12 +2,15 @@ package com.example.mystoryappcompose.ui.screen.login
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,7 +36,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -108,14 +113,31 @@ fun LoginComponent(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.login),
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 36.sp,
-            modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .padding(top = 48.dp)
-        )
+        Spacer(modifier = Modifier.height(46.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.news_svgrepo_com),
+                contentDescription = "logo"
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.story_app),
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+
+            )
+            Text(
+                text = stringResource(R.string.login),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+            )
+        }
 
         OutlinedTextField(
             value = email,

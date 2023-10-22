@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
     private var locationModel by mutableStateOf(
         LocationModel(0.0, 0.0)
     )
+    private var isLocationEnabled by mutableStateOf(false)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val startDestination = authViewModel.startDestination
 
-                    MyStoryApp(startDestination = startDestination.value, location = locationModel)
+                    MyStoryApp(startDestination = startDestination.value, location = locationModel, locationEnabled = isLocationEnabled)
                 }
             }
         }
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity() {
             val areGranted = permissionsMap.values.all { it }
             if (areGranted) {
                 locationRequired = true
+                isLocationEnabled  = true
                 startLocationUpdates()
                 Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {

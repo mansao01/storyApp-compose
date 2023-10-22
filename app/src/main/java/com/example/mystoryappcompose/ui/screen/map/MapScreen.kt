@@ -1,11 +1,21 @@
 package com.example.mystoryappcompose.ui.screen.map
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.util.Log
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.res.stringResource
+import com.example.mystoryappcompose.R
 import com.example.mystoryappcompose.data.model.LocationModel
 import com.example.mystoryappcompose.data.network.response.ListStoryWitLocationItem
 import com.example.mystoryappcompose.ui.common.MapUiState
@@ -21,30 +31,37 @@ import com.google.maps.android.compose.MarkerState
 @Composable
 fun MapScreen(
     uiState: MapUiState,
-    location: LocationModel
+    location: LocationModel,
+    locationEnabled: Boolean,
+    navigateToHome: () -> Unit
 ) {
     val context = LocalContext.current
-    when (uiState) {
-        is MapUiState.Loading -> LoadingScreen()
-        is MapUiState.Success -> MapScreenContent(
-            storyList = uiState.getStoriesWithLocationResponse.listStoryWithLocation,
-            location = location
-        )
+    Scaffold(topBar = { MapTopBar(navigateToHome = { navigateToHome() }) }) {
+        Surface(modifier = Modifier.padding(it)) {
+            when (uiState) {
+                is MapUiState.Loading -> LoadingScreen()
+                is MapUiState.Success -> MapScreenContent(
+                    storyList = uiState.getStoriesWithLocationResponse.listStoryWithLocation,
+                    location = location,
+                    locationEnabled = locationEnabled
+                )
 
-        is MapUiState.Error -> MToast(context = context, message = uiState.msg)
+                is MapUiState.Error -> MToast(context = context, message = uiState.msg)
+            }
+        }
     }
 }
 
 @Composable
 fun MapScreenContent(
     storyList: List<ListStoryWitLocationItem>,
-    location: LocationModel
-
+    location: LocationModel,
+    locationEnabled: Boolean
 ) {
     Log.d("Location", location.toString())
     val boundsBuilder = LatLngBounds.builder()
     GoogleMap(
-        properties = MapProperties(isMyLocationEnabled = true)
+        properties = MapProperties(isMyLocationEnabled = locationEnabled)
     ) {
         storyList.forEach { storyItem ->
             val lat = storyItem.lat
@@ -60,8 +77,17 @@ fun MapScreenContent(
     }
 }
 
-private fun hasLocationPermission(context: Context):Boolean {
-    return ContextCompat.checkSelfPermission(
-        context, android.Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MapTopBar(
+    navigateToHome: () -> Unit,
+) {
+    TopAppBar(
+        title = { Text(text = stringResource(R.string.story_location)) },
+        navigationIcon = {
+            IconButton(onClick = { navigateToHome() }) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            }
+        }
+    )
 }

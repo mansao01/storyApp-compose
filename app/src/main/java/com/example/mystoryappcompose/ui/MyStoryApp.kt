@@ -30,7 +30,8 @@ import com.example.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 fun MyStoryApp(
     navController: NavHostController = rememberNavController(),
     startDestination: String,
-    location:LocationModel
+    location: LocationModel,
+    locationEnabled: Boolean
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val sharedViewModel: SharedViewModel = viewModel()
@@ -84,6 +85,7 @@ fun MyStoryApp(
             val addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory)
             AddScreen(
                 uiState = addViewModel.uiState,
+                scrollBehavior = scrollBehavior,
                 navigateToHome = {
                     navController.popBackStack()
                     navController.navigate(Screen.Home.route)
@@ -100,7 +102,15 @@ fun MyStoryApp(
 
         composable(Screen.Map.route) {
             val mapViewModel: MapViewModel = viewModel(factory = MapViewModel.Factory)
-            MapScreen(uiState = mapViewModel.uiState, location = location)
+            MapScreen(
+                uiState = mapViewModel.uiState,
+                location = location,
+                locationEnabled = locationEnabled,
+                navigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                    navController.popBackStack()
+                }
+            )
         }
     }
 

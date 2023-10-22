@@ -21,9 +21,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -50,29 +62,42 @@ import java.util.Date
 import java.util.Locale
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun AddScreen(
     uiState: AddUiState,
     addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory),
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val context = LocalContext.current
-
-    when (uiState) {
-        is AddUiState.StandBy -> AddScreenComponent(addViewModel = addViewModel)
-        is AddUiState.Loading -> LoadingScreen()
-        is AddUiState.Success -> {
-            LaunchedEffect(key1 = Unit) {
-                Toast.makeText(context, uiState.postStoryResponse.message, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            navigateToHome()
+    Scaffold(
+        topBar = {
+            AddTopBar(scrollBehavior = scrollBehavior, navigateToHome = navigateToHome)
         }
+    ) {
+        Surface(modifier = Modifier.padding(it)) {
 
-        is AddUiState.Error -> {
-            MToast(context = context, message = uiState.msg)
-            addViewModel.updateUiState()
+            when (uiState) {
+                is AddUiState.StandBy -> AddScreenComponent(addViewModel = addViewModel)
+                is AddUiState.Loading -> LoadingScreen()
+                is AddUiState.Success -> {
+                    LaunchedEffect(key1 = Unit) {
+                        Toast.makeText(
+                            context,
+                            uiState.postStoryResponse.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    navigateToHome()
+                }
+
+                is AddUiState.Error -> {
+                    MToast(context = context, message = uiState.msg)
+                    addViewModel.updateUiState()
+                }
+            }
         }
     }
 
@@ -125,7 +150,9 @@ fun AddScreenComponent(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         DisplaySelectedImage(imageUri = galleryImageUri ?: captureImageUri, context = context)
         if (isImageSelected) {
@@ -171,6 +198,7 @@ fun AddScreenComponent(
             description = description,
             addViewModel = addViewModel
         )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 
 
@@ -244,5 +272,22 @@ fun Context.createImageFile(): File {
         imageFileName, /* prefix */
         ".jpg", /* suffix */
         externalCacheDir      /* directory */
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddTopBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    navigateToHome: () -> Unit,
+) {
+    LargeTopAppBar(
+        scrollBehavior = scrollBehavior,
+        title = { Text(text = stringResource(R.string.add_story)) },
+        navigationIcon = {
+            IconButton(onClick = { navigateToHome() }) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            }
+        }
     )
 }

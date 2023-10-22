@@ -3,7 +3,7 @@
 
     <style name="Theme.MyStoryAppCompose.MyCustomTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#FFFFFF</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/furibo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/news_svgrepo_com</item>
         <item name="postSplashScreenTheme">@style/Theme.MyStoryAppCompose</item>
     </style>
 </resources>

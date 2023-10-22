@@ -154,16 +154,16 @@ fun HomeTopBar(
         title = { Text(text = "Welcome, $username") },
         actions = {
             IconButton(onClick = {
+                navigateToMap()
+            }) {
+                Icon(imageVector = Icons.Default.Map, contentDescription = "Maps")
+            }
+            IconButton(onClick = {
                 context.imageLoader.memoryCache?.clear()
                 context.imageLoader.diskCache?.clear()
                 logout(homeViewModel, navigateToLogin)
             }) {
                 Icon(imageVector = Icons.Default.Logout, contentDescription = "Logout")
-            }
-            IconButton(onClick = {
-                navigateToMap()
-            }) {
-                Icon(imageVector = Icons.Default.Map, contentDescription = "Maps")
             }
 
         }
