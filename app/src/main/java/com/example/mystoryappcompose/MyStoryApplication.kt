@@ -14,6 +14,7 @@ import coil.util.DebugLogger
 import com.example.mystoryappcompose.data.AppContainer
 import com.example.mystoryappcompose.data.DefaultAppContainer
 import com.example.mystoryappcompose.preferences.AuthTokenManager
+import kotlinx.coroutines.runBlocking
 
 private const val AUTH_PREF_NAME = "auth_pref"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -25,8 +26,13 @@ class MyStoryApplication : Application(), ImageLoaderFactory {
     lateinit var authTokenManager: AuthTokenManager
     override fun onCreate() {
         super.onCreate()
-        container = DefaultAppContainer()
         authTokenManager = AuthTokenManager(dataStore)
+        val token = runBlocking {
+            authTokenManager.getAccessToken()
+        }
+        container = DefaultAppContainer(token = token.toString())
+
+
 
     }
 

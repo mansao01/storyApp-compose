@@ -10,13 +10,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mystoryappcompose.MyStoryApplication
 import com.example.mystoryappcompose.data.MyStoryRepository
-import com.example.mystoryappcompose.preferences.AuthTokenManager
 import com.example.mystoryappcompose.ui.common.MapUiState
 import kotlinx.coroutines.launch
 
 class MapViewModel(
     private val myStoryRepository: MyStoryRepository,
-    private val authTokenManager: AuthTokenManager
 ) : ViewModel() {
 
     var uiState: MapUiState by mutableStateOf(MapUiState.Loading)
@@ -30,7 +28,7 @@ class MapViewModel(
             uiState = MapUiState.Loading
             uiState = try {
                 val result =
-                    myStoryRepository.getStoriesWithLocation("Bearer ${authTokenManager.getAccessToken()}")
+                    myStoryRepository.getStoriesWithLocation()
                 MapUiState.Success(result)
             } catch (e: Exception) {
                 MapUiState.Error(e.message.toString())
@@ -45,10 +43,8 @@ class MapViewModel(
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MyStoryApplication)
                 val noteRepository = application.container.myStoryRepository
-                val authTokenManager = application.authTokenManager
                 MapViewModel(
                     myStoryRepository = noteRepository,
-                    authTokenManager = authTokenManager
                 )
             }
         }

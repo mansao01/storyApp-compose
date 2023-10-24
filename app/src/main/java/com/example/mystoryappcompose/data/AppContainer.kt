@@ -1,6 +1,7 @@
 package com.example.mystoryappcompose.data
 
 import com.example.mystoryappcompose.data.network.ApiService
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,12 +11,20 @@ interface AppContainer {
     val myStoryRepository: MyStoryRepository
 }
 
-class DefaultAppContainer : AppContainer {
+class DefaultAppContainer(private val token:String) : AppContainer {
 
     private val loggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    private val authInterceptor = Interceptor{chain ->
+        val req = chain.request()
+        val requestHeader = req.newBuilder()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
+        chain.proceed(requestHeader)
+    }
     private val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
         .build()
 
     private val retrofit = Retrofit.Builder()

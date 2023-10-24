@@ -16,9 +16,9 @@ import java.io.File
 interface MyStoryRepository {
     suspend fun register(name: String, email: String, password: String): RegisterResponse
     suspend fun login(email: String, password: String): LoginResponse
-    suspend fun getStories(token: String): GetStoriesResponse
-    suspend fun getStoriesWithLocation(token: String): GetStoriesWithLocationResponse
-    suspend fun postStory(token:String, getFile:File, description:String): PostStoryResponse
+    suspend fun getStories(): GetStoriesResponse
+    suspend fun getStoriesWithLocation(): GetStoriesWithLocationResponse
+    suspend fun postStory(getFile:File, description:String): PostStoryResponse
 }
 
 class NetworkMyStoryRepository(
@@ -32,15 +32,15 @@ class NetworkMyStoryRepository(
         return apiService.login(email, password)
     }
 
-    override suspend fun getStories(token: String): GetStoriesResponse {
-        return apiService.getStories(token)
+    override suspend fun getStories(): GetStoriesResponse {
+        return apiService.getStories()
     }
 
-    override suspend fun getStoriesWithLocation(token: String): GetStoriesWithLocationResponse {
-        return apiService.getStoriesWithLocation(token)
+    override suspend fun getStoriesWithLocation(): GetStoriesWithLocationResponse {
+        return apiService.getStoriesWithLocation()
     }
 
-    override suspend fun postStory(token: String, getFile: File, description: String):PostStoryResponse {
+    override suspend fun postStory(getFile: File, description: String):PostStoryResponse {
         val file = CameraUtils.reduceFileImage(getFile)
         val descBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
@@ -49,6 +49,6 @@ class NetworkMyStoryRepository(
             file.name,
             requestImageFile
         )
-        return apiService.postStory(token, imageMultipart, descBody)
+        return apiService.postStory( imageMultipart, descBody)
     }
 }

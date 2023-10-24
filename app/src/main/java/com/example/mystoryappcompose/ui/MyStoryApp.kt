@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mystoryappcompose.data.model.LocationModel
+import com.example.mystoryappcompose.data.local.model.LocationModel
 import com.example.mystoryappcompose.ui.navigation.Screen
 import com.example.mystoryappcompose.ui.screen.add.AddScreen
 import com.example.mystoryappcompose.ui.screen.add.AddViewModel

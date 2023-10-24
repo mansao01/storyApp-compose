@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.mystoryappcompose.data.model.LocationModel
+import com.example.mystoryappcompose.data.local.model.LocationModel
 import com.example.mystoryappcompose.preferences.AuthViewModel
 import com.example.mystoryappcompose.ui.MyStoryApp
 import com.example.mystoryappcompose.ui.theme.MyStoryAppComposeTheme

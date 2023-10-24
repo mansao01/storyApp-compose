@@ -25,7 +25,7 @@ class HomeViewModel(
         viewModelScope.launch {
             uiState = HomeUiState.Loading
             uiState = try {
-                val result = myStoryRepository.getStories("Bearer ${authTokenManager.getAccessToken()}")
+                val result = myStoryRepository.getStories()
                 val username = authTokenManager.getUsername()
                 HomeUiState.Success(result, username!!)
             }catch (e:Exception){

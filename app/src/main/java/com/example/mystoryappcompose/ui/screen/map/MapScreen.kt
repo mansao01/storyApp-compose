@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.mystoryappcompose.R
-import com.example.mystoryappcompose.data.model.LocationModel
+import com.example.mystoryappcompose.data.local.model.LocationModel
 import com.example.mystoryappcompose.data.network.response.ListStoryWitLocationItem
 import com.example.mystoryappcompose.ui.common.MapUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
