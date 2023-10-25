@@ -1,10 +1,12 @@
 package com.example.mystoryappcompose.ui.common
 
-import com.example.mystoryappcompose.data.network.response.GetStoriesResponse
+import androidx.paging.PagingData
 import com.example.mystoryappcompose.data.network.response.GetStoriesWithLocationResponse
+import com.example.mystoryappcompose.data.network.response.ListStoryItem
 import com.example.mystoryappcompose.data.network.response.LoginResponse
 import com.example.mystoryappcompose.data.network.response.PostStoryResponse
 import com.example.mystoryappcompose.data.network.response.RegisterResponse
+import kotlinx.coroutines.flow.Flow
 
 
 sealed interface RegisterUiState {
@@ -25,7 +27,7 @@ sealed interface LoginUiState {
 
 sealed interface HomeUiState {
     object Loading : HomeUiState
-    data class Success(val getStoriesResponse: GetStoriesResponse, val username: String) :
+    data class Success(val getStoriesResponse: Flow<PagingData<ListStoryItem>>, val username: String) :
         HomeUiState
 
     data class Error(val msg: String) : HomeUiState

@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Map
@@ -26,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
 import com.example.mystoryappcompose.BuildConfig
@@ -37,6 +38,7 @@ import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
 import com.example.mystoryappcompose.ui.component.MyFloatingActionButton
 import com.example.mystoryappcompose.ui.component.StoryItem
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +69,7 @@ fun HomeScreen(
         is HomeUiState.Loading -> LoadingScreen()
         is HomeUiState.Success -> {
             HomeScreenContent(
-                uiState.getStoriesResponse.listStory,
+                uiState.getStoriesResponse,
                 scrollBehavior = scrollBehavior,
                 navigateToLogin = navigateToLogin,
                 homeViewModel = homeViewModel,
@@ -87,7 +89,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    storyList: List<ListStoryItem>,
+    storyList: Flow<PagingData<ListStoryItem>>,
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
     homeViewModel: HomeViewModel,
@@ -124,17 +126,21 @@ fun HomeScreenContent(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StoryList(
-    storyList: List<ListStoryItem>,
+    storyList: Flow<PagingData<ListStoryItem>>,
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
     navigateToDetail: () -> Unit
 ) {
-    LazyColumn {
-        items(storyList, key = {it.id}) { data ->
-            StoryItem(story = data, modifier = modifier.clickable {
-                sharedViewModel.addStory(newStory = data)
-                navigateToDetail()
-            })
+    val lazyPagingItems = storyList.collectAsLazyPagingItems()
+    LazyColumn{
+        items(count = lazyPagingItems.itemCount){ index ->
+            val item = lazyPagingItems[index]
+            if (item != null) {
+                StoryItem(story = item, modifier = modifier.clickable {
+                    sharedViewModel.addStory(newStory = item)
+                    navigateToDetail()
+                })
+            }
         }
     }
 }

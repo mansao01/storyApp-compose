@@ -1,5 +1,7 @@
 package com.example.mystoryappcompose.data
 
+import android.content.Context
+import com.example.mystoryappcompose.data.local.StoryDatabase
 import com.example.mystoryappcompose.data.network.ApiService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -11,7 +13,7 @@ interface AppContainer {
     val myStoryRepository: MyStoryRepository
 }
 
-class DefaultAppContainer(private val token:String) : AppContainer {
+class DefaultAppContainer(private val token:String, context:Context) : AppContainer {
 
     private val loggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -37,7 +39,7 @@ class DefaultAppContainer(private val token:String) : AppContainer {
         retrofit.create(ApiService::class.java)
     }
     override val myStoryRepository: MyStoryRepository by lazy {
-        NetworkMyStoryRepository(retrofitService)
+        NetworkMyStoryRepository(retrofitService, StoryDatabase.getDatabase(context))
     }
 
     companion object {

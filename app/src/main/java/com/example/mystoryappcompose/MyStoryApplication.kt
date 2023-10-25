@@ -30,9 +30,7 @@ class MyStoryApplication : Application(), ImageLoaderFactory {
         val token = runBlocking {
             authTokenManager.getAccessToken()
         }
-        container = DefaultAppContainer(token = token.toString())
-
-
+        container = DefaultAppContainer(token = token.toString(), context = this)
 
     }
 
