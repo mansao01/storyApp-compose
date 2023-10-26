@@ -71,7 +71,8 @@ fun MapScreenContent(
             Marker(
                 state = MarkerState(position),
                 title = storyItem.name,
-                snippet = storyItem.description
+                snippet = storyItem.description,
+
             )
         }
     }

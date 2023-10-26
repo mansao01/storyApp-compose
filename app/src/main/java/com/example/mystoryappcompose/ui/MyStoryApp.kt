@@ -109,8 +109,8 @@ fun MyStoryApp(
                 location = location,
                 locationEnabled = locationEnabled,
                 navigateToHome = {
-                    navController.navigate(Screen.Home.route)
                     navController.popBackStack()
+                    navController.navigate(Screen.Home.route)
                 }
             )
         }
