@@ -12,6 +12,8 @@ import com.example.mystoryappcompose.MyStoryApplication
 import com.example.mystoryappcompose.data.MyStoryRepository
 import com.example.mystoryappcompose.preferences.AuthTokenManager
 import com.example.mystoryappcompose.ui.common.HomeUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -21,15 +23,20 @@ class HomeViewModel(
     var uiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
 
+    private val _isLoading  = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
       fun getStories(){
         viewModelScope.launch {
+            _isLoading.value = true
             uiState = HomeUiState.Loading
             uiState = try {
                 val result = myStoryRepository.getStories()
                 val username = authTokenManager.getUsername()
+                _isLoading.value = false
                 HomeUiState.Success(result, username!!)
             }catch (e:Exception){
-
+                _isLoading.value = false
                 HomeUiState.Error(e.toString())
             }
         }

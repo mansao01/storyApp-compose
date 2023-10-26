@@ -38,6 +38,8 @@ import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
 import com.example.mystoryappcompose.ui.component.MyFloatingActionButton
 import com.example.mystoryappcompose.ui.component.StoryItem
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -96,7 +98,7 @@ fun HomeScreenContent(
     navigateToAdd: () -> Unit,
     navigateToDetail: () -> Unit,
     sharedViewModel: SharedViewModel,
-    username:String,
+    username: String,
     navigateToMap: () -> Unit
 ) {
     Scaffold(
@@ -113,10 +115,11 @@ fun HomeScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         Surface(modifier = Modifier.padding(it)) {
-            StoryList(
+            SwipeRefreshStory(
                 storyList = storyList,
                 sharedViewModel = sharedViewModel,
-                navigateToDetail = navigateToDetail
+                navigateToDetail = navigateToDetail,
+                homeViewModel = homeViewModel
             )
         }
 
@@ -132,8 +135,8 @@ fun StoryList(
     navigateToDetail: () -> Unit
 ) {
     val lazyPagingItems = storyList.collectAsLazyPagingItems()
-    LazyColumn{
-        items(count = lazyPagingItems.itemCount){ index ->
+    LazyColumn {
+        items(count = lazyPagingItems.itemCount) { index ->
             val item = lazyPagingItems[index]
             if (item != null) {
                 StoryItem(story = item, modifier = modifier.clickable {
@@ -145,12 +148,34 @@ fun StoryList(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun SwipeRefreshStory(
+    storyList: Flow<PagingData<ListStoryItem>>,
+    sharedViewModel: SharedViewModel,
+    navigateToDetail: () -> Unit,
+    homeViewModel: HomeViewModel
+) {
+    val isLoading by homeViewModel.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = { homeViewModel.getStories() }
+    ) {
+        StoryList(
+            storyList = storyList,
+            sharedViewModel = sharedViewModel,
+            navigateToDetail = { navigateToDetail() })
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
-    navigateToMap:() ->Unit,
+    navigateToMap: () -> Unit,
     homeViewModel: HomeViewModel,
     username: String
 ) {
@@ -179,6 +204,4 @@ fun HomeTopBar(
 private fun logout(homeViewModel: HomeViewModel, navigateToLogin: () -> Unit) {
     homeViewModel.logout()
     navigateToLogin()
-
-
 }

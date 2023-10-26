@@ -13,11 +13,11 @@ interface AppContainer {
     val myStoryRepository: MyStoryRepository
 }
 
-class DefaultAppContainer(private val token:String, context:Context) : AppContainer {
+class DefaultAppContainer(private val token: String, context: Context) : AppContainer {
 
     private val loggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-    private val authInterceptor = Interceptor{chain ->
+    private val authInterceptor = Interceptor { chain ->
         val req = chain.request()
         val requestHeader = req.newBuilder()
             .addHeader("Authorization", "Bearer $token")
@@ -39,7 +39,7 @@ class DefaultAppContainer(private val token:String, context:Context) : AppContai
         retrofit.create(ApiService::class.java)
     }
     override val myStoryRepository: MyStoryRepository by lazy {
-        NetworkMyStoryRepository(retrofitService, StoryDatabase.getDatabase(context))
+        MyStoryRepositoryImpl(retrofitService, StoryDatabase.getDatabase(context))
     }
 
     companion object {

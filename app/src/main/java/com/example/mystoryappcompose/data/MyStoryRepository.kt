@@ -30,7 +30,7 @@ interface MyStoryRepository {
     suspend fun postStory(getFile: File, description: String): PostStoryResponse
 }
 
-class NetworkMyStoryRepository(
+class MyStoryRepositoryImpl(
     private val apiService: ApiService,
     private val storyDatabase: StoryDatabase
 ) : MyStoryRepository {
