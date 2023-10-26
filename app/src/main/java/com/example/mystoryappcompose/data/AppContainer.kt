@@ -2,47 +2,27 @@ package com.example.mystoryappcompose.data
 
 import android.content.Context
 import com.example.mystoryappcompose.data.local.StoryDatabase
-import com.example.mystoryappcompose.data.network.ApiService
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.mystoryappcompose.data.network.ApiConfig
+import com.example.mystoryappcompose.preferences.AuthTokenManager
 
 interface AppContainer {
     val myStoryRepository: MyStoryRepository
 }
 
-class DefaultAppContainer(private val token: String, context: Context) : AppContainer {
+class DefaultAppContainer(
+    private val token: String,
+    private val authTokenManager: AuthTokenManager,
+    context: Context
+) : AppContainer {
 
-    private val loggingInterceptor =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-    private val authInterceptor = Interceptor { chain ->
-        val req = chain.request()
-        val requestHeader = req.newBuilder()
-            .addHeader("Authorization", "Bearer $token")
-            .build()
-        chain.proceed(requestHeader)
-    }
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(authInterceptor)
-        .build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val retrofitService: ApiService by lazy {
-        retrofit.create(ApiService::class.java)
-    }
     override val myStoryRepository: MyStoryRepository by lazy {
-        MyStoryRepositoryImpl(retrofitService, StoryDatabase.getDatabase(context))
+        MyStoryRepositoryImpl(
+            ApiConfig.getApiService(token),
+            StoryDatabase.getDatabase(context),
+            authTokenManager
+        )
     }
 
-    companion object {
-        private const val BASE_URL = "https://story-api.dicoding.dev/v1/"
-    }
+
 }

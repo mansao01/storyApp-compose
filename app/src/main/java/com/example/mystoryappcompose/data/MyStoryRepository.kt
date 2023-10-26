@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.mystoryappcompose.data.local.StoryDatabase
+import com.example.mystoryappcompose.data.network.ApiConfig
 import com.example.mystoryappcompose.data.network.ApiService
 import com.example.mystoryappcompose.data.network.response.GetStoriesWithLocationResponse
 import com.example.mystoryappcompose.data.network.response.ListStoryItem
@@ -12,8 +13,10 @@ import com.example.mystoryappcompose.data.network.response.LoginResponse
 import com.example.mystoryappcompose.data.network.response.PostStoryResponse
 import com.example.mystoryappcompose.data.network.response.RegisterResponse
 import com.example.mystoryappcompose.data.paging.StoryRemoteMediator
+import com.example.mystoryappcompose.preferences.AuthTokenManager
 import com.example.mystoryappcompose.utils.CameraUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -37,7 +40,8 @@ interface MyStoryRepository {
 
 class MyStoryRepositoryImpl(
     private val apiService: ApiService,
-    private val storyDatabase: StoryDatabase
+    private val storyDatabase: StoryDatabase,
+    private val authTokenManager: AuthTokenManager
 ) : MyStoryRepository {
     override suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
@@ -47,12 +51,13 @@ class MyStoryRepositoryImpl(
         return apiService.login(email, password)
     }
 
-    //    override suspend fun getStories(): GetStoriesResponse {
-//        return apiService.getStories()
-//    }
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun getStories(): Flow<PagingData<ListStoryItem>> {
         val pagingSourceFactory = { storyDatabase.storyDao().getAllStories() }
+        val token = runBlocking {
+            authTokenManager.getAccessToken()
+        }
+        val apiService = ApiConfig.getApiService(token.toString())
         return Pager(
             config = PagingConfig(pageSize = 10),
             remoteMediator = StoryRemoteMediator(
@@ -64,6 +69,10 @@ class MyStoryRepositoryImpl(
     }
 
     override suspend fun getStoriesWithLocation(): GetStoriesWithLocationResponse {
+        val token = runBlocking {
+            authTokenManager.getAccessToken()
+        }
+        val apiService = ApiConfig.getApiService(token.toString())
         return apiService.getStoriesWithLocation()
     }
 
@@ -78,6 +87,10 @@ class MyStoryRepositoryImpl(
             file.name,
             requestImageFile
         )
+        val token = runBlocking {
+            authTokenManager.getAccessToken()
+        }
+        val apiService = ApiConfig.getApiService(token.toString())
         return apiService.postStory(imageMultipart, descBody, lat, lon)
     }
 }

@@ -13,8 +13,6 @@ import com.example.mystoryappcompose.data.MyStoryRepository
 import com.example.mystoryappcompose.preferences.AuthTokenManager
 import com.example.mystoryappcompose.ui.common.LoginUiState
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 class LoginViewModel(
     private val myStoryRepository: MyStoryRepository,
@@ -38,19 +36,7 @@ class LoginViewModel(
                 LoginUiState.Success(result)
 
             } catch (e: Exception) {
-                val errorMessage = when (e) {
-                    is IOException -> "Network error occurred"
-                    is HttpException -> {
-                        when (e.code()) {
-                            400 -> e.response()?.errorBody()?.string().toString()
-                            // Add more cases for specific HTTP error codes if needed
-                            else -> "HTTP error: ${e.code()}"
-                        }
-                    }
-
-                    else -> "An unexpected error occurred"
-                }
-                LoginUiState.Error(errorMessage)
+                LoginUiState.Error(e.message.toString())
             }
         }
     }
