@@ -89,7 +89,9 @@ fun MyStoryApp(
                 navigateToHome = {
                     navController.popBackStack()
                     navController.navigate(Screen.Home.route)
-                })
+                },
+                location = location
+            )
         }
 
         composable(Screen.Detail.route) {

@@ -7,12 +7,14 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +35,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mystoryappcompose.R
+import com.example.mystoryappcompose.data.local.model.LocationModel
 import com.example.mystoryappcompose.ui.common.AddUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
@@ -70,6 +74,7 @@ fun AddScreen(
     addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory),
     navigateToHome: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
+    location: LocationModel
 ) {
     val context = LocalContext.current
     Scaffold(
@@ -80,7 +85,11 @@ fun AddScreen(
         Surface(modifier = Modifier.padding(it)) {
 
             when (uiState) {
-                is AddUiState.StandBy -> AddScreenComponent(addViewModel = addViewModel)
+                is AddUiState.StandBy -> AddScreenComponent(
+                    addViewModel = addViewModel,
+                    location = location
+                )
+
                 is AddUiState.Loading -> LoadingScreen()
                 is AddUiState.Success -> {
                     LaunchedEffect(key1 = Unit) {
@@ -106,11 +115,13 @@ fun AddScreen(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun AddScreenComponent(
-    addViewModel: AddViewModel
+    addViewModel: AddViewModel,
+    location: LocationModel
 ) {
     val context = LocalContext.current
     val file = context.createImageFile()
     val cameraUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    var checked by remember { mutableStateOf(false) }
 
     var galleryImageUri by remember { mutableStateOf<Uri?>(null) }
     var captureImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -170,6 +181,7 @@ fun AddScreenComponent(
                 }) {
                     Text(text = "Open Gallery")
                 }
+                Spacer(modifier = Modifier.padding(horizontal = 16.dp))
                 Button(onClick = {
                     val permissionCheckResult =
                         ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
@@ -189,19 +201,36 @@ fun AddScreenComponent(
             value = description,
             onValueChange = { description = it },
             label = { Text(text = "Description") },
-            isError = description.isEmpty()
+            isError = description.isEmpty(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(text = "With location?")
+            Spacer(modifier = Modifier.padding(8.dp))
+            Switch(checked = checked, onCheckedChange = { isChecked ->
+                checked = isChecked
+            })
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         UploadFile(
             imageUri = galleryImageUri ?: captureImageUri,
             description = description,
-            addViewModel = addViewModel
+            addViewModel = addViewModel,
+            isChecked = checked,
+            location = location
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
-
-
 }
 
 
@@ -235,6 +264,8 @@ fun UploadFile(
     imageUri: Uri?,
     description: String,
     addViewModel: AddViewModel,
+    isChecked: Boolean,
+    location: LocationModel,
 ) {
     val context = LocalContext.current
     val isButtonEnable = (description.isNotEmpty() && imageUri != null)
@@ -245,8 +276,20 @@ fun UploadFile(
 
     Button(
         onClick = {
-            rotatedFile?.let {
-                addViewModel.postStory(it, description)
+            if (isChecked) {
+                rotatedFile?.let {
+                    addViewModel.postStory(
+                        it,
+                        description,
+                        location.latitude.toFloat(),
+                        location.longitude.toFloat()
+                    )
+                }
+                Log.d("latitude", location.latitude.toString())
+            } else {
+                rotatedFile?.let {
+                    addViewModel.postStory(it, description)
+                }
             }
         },
         enabled = isButtonEnable,

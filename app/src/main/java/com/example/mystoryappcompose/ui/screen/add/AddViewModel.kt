@@ -25,13 +25,15 @@ class AddViewModel(
         uiState = AddUiState.StandBy
     }
 
-    fun postStory(file: File, description: String) {
+    fun postStory(file: File, description: String, lat: Float? = null, lon: Float? = null) {
         viewModelScope.launch {
             uiState = AddUiState.Loading
             uiState = try {
                 val result = myStoryRepository.postStory(
                     file,
-                    description
+                    description,
+                    lat,
+                    lon
                 )
                 AddUiState.Success(result)
             } catch (e: Exception) {

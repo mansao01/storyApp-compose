@@ -57,7 +57,9 @@ interface ApiService {
     suspend fun postStory(
         @Part file: MultipartBody.Part,
         @Part("description")
-        description: RequestBody
+        description: RequestBody,
+        @Part("lat") lat:Float?,
+        @Part("lon") lon:Float?,
     ): PostStoryResponse
 
 //    Note: we do not need to specify the headers anymore, because already handled by interceptor, check the app container

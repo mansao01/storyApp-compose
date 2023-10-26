@@ -27,7 +27,12 @@ interface MyStoryRepository {
     //    suspend fun getStories(): GetStoriesResponse
     suspend fun getStories(): Flow<PagingData<ListStoryItem>>
     suspend fun getStoriesWithLocation(): GetStoriesWithLocationResponse
-    suspend fun postStory(getFile: File, description: String): PostStoryResponse
+    suspend fun postStory(
+        getFile: File,
+        description: String,
+        lat: Float? = null,
+        lon: Float? = null
+    ): PostStoryResponse
 }
 
 class MyStoryRepositoryImpl(
@@ -62,7 +67,9 @@ class MyStoryRepositoryImpl(
         return apiService.getStoriesWithLocation()
     }
 
-    override suspend fun postStory(getFile: File, description: String): PostStoryResponse {
+    override suspend fun postStory(
+        getFile: File, description: String, lat: Float?, lon: Float?
+    ): PostStoryResponse {
         val file = CameraUtils.reduceFileImage(getFile)
         val descBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
@@ -71,6 +78,6 @@ class MyStoryRepositoryImpl(
             file.name,
             requestImageFile
         )
-        return apiService.postStory(imageMultipart, descBody)
+        return apiService.postStory(imageMultipart, descBody, lat, lon)
     }
 }

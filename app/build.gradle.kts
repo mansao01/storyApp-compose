@@ -95,7 +95,7 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:2.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    implementation ("com.google.accompanist:accompanist-permissions:0.25.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.25.0")
 
 //    paging
     implementation("androidx.paging:paging-compose:3.2.1")
@@ -106,7 +106,7 @@ dependencies {
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-paging:${rootProject.extra["room_version"]}")
 
-    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 
 
 
