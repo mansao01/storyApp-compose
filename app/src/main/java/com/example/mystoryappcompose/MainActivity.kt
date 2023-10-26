@@ -84,6 +84,8 @@ class MainActivity : ComponentActivity() {
 
         if (hasLocationPermissions(context, permissions)) {
             startLocationUpdates()
+            isLocationEnabled = true
+
         } else {
             RequestLocationPermissions(context, permissions)
         }
@@ -115,7 +117,6 @@ class MainActivity : ComponentActivity() {
             val areGranted = permissionsMap.values.all { it }
             if (areGranted) {
                 locationRequired = true
-                isLocationEnabled  = true
                 startLocationUpdates()
                 Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
@@ -156,7 +157,7 @@ class MainActivity : ComponentActivity() {
                     latitude,
                     longitude,
 
-                )
+                    )
             } else {
                 LocationModel(latitude, longitude)
             }

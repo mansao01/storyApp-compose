@@ -12,6 +12,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -61,11 +64,21 @@ fun MapScreenContent(
     location: LocationModel,
     locationEnabled: Boolean
 ) {
-    Log.d("Location", location.toString())
+    Log.d("isLocationEnabled", locationEnabled.toString())
     val boundsBuilder = LatLngBounds.builder()
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(location.latitude, location.longitude), 10f)
+    val currentLocation by remember {
+        mutableStateOf(
+            LatLng(
+                location.latitude,
+                location.longitude
+            )
+        )
     }
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(currentLocation, 10f)
+    }
+
     GoogleMap(
         properties = MapProperties(isMyLocationEnabled = locationEnabled),
         cameraPositionState = cameraPositionState
