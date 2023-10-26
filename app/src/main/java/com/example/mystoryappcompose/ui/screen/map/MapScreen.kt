@@ -21,12 +21,15 @@ import com.example.mystoryappcompose.data.network.response.ListStoryWitLocationI
 import com.example.mystoryappcompose.ui.common.MapUiState
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun MapScreen(
@@ -60,8 +63,12 @@ fun MapScreenContent(
 ) {
     Log.d("Location", location.toString())
     val boundsBuilder = LatLngBounds.builder()
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(location.latitude, location.longitude), 10f)
+    }
     GoogleMap(
-        properties = MapProperties(isMyLocationEnabled = locationEnabled)
+        properties = MapProperties(isMyLocationEnabled = locationEnabled),
+        cameraPositionState = cameraPositionState
     ) {
         storyList.forEach { storyItem ->
             val lat = storyItem.lat
@@ -72,8 +79,8 @@ fun MapScreenContent(
                 state = MarkerState(position),
                 title = storyItem.name,
                 snippet = storyItem.description,
-
             )
+            cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 64))
         }
     }
 }
