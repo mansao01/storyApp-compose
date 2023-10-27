@@ -108,6 +108,9 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 
+    implementation("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+
+
 
 
     testImplementation("junit:junit:4.13.2")
