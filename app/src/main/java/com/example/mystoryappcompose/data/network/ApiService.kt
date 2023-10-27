@@ -37,10 +37,7 @@ interface ApiService {
         password: String
     ): RegisterResponse
 
-//    @GET("stories")
-//    suspend fun getStories(
-//        @Header("Authorization") token: String
-//    ): GetStoriesResponse
+
     @GET("stories")
     suspend fun getStories(
         @Query("page") page: Int = 1,
@@ -62,6 +59,6 @@ interface ApiService {
         @Part("lon") lon:Float?,
     ): PostStoryResponse
 
-//    Note: we do not need to specify the headers anymore, because already handled by interceptor, check the app container
+//    Note: not need to specify the headers anymore, because already handled by interceptor, check the app container
 
 }

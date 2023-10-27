@@ -27,7 +27,6 @@ interface MyStoryRepository {
     suspend fun register(name: String, email: String, password: String): RegisterResponse
     suspend fun login(email: String, password: String): LoginResponse
 
-    //    suspend fun getStories(): GetStoriesResponse
     suspend fun getStories(): Flow<PagingData<ListStoryItem>>
     suspend fun getStoriesWithLocation(): GetStoriesWithLocationResponse
     suspend fun postStory(

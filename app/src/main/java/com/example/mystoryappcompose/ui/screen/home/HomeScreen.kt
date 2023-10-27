@@ -4,6 +4,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -19,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -34,10 +38,14 @@ import com.example.mystoryappcompose.data.network.response.ListStoryItem
 import com.example.mystoryappcompose.preferences.AuthViewModel
 import com.example.mystoryappcompose.ui.SharedViewModel
 import com.example.mystoryappcompose.ui.common.HomeUiState
+import com.example.mystoryappcompose.ui.component.ConnectivityStatus
 import com.example.mystoryappcompose.ui.component.LoadingScreen
 import com.example.mystoryappcompose.ui.component.MToast
 import com.example.mystoryappcompose.ui.component.MyFloatingActionButton
 import com.example.mystoryappcompose.ui.component.StoryItem
+import com.example.mystoryappcompose.utils.ConnectionStatus
+import com.example.mystoryappcompose.utils.currentConnectivityStatus
+import com.example.mystoryappcompose.utils.observeConnectivityAsFlow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
@@ -115,12 +123,15 @@ fun HomeScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         Surface(modifier = Modifier.padding(it)) {
-            SwipeRefreshStory(
-                storyList = storyList,
-                sharedViewModel = sharedViewModel,
-                navigateToDetail = navigateToDetail,
-                homeViewModel = homeViewModel
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                CheckConnectionStatus()
+                SwipeRefreshStory(
+                    storyList = storyList,
+                    sharedViewModel = sharedViewModel,
+                    navigateToDetail = navigateToDetail,
+                    homeViewModel = homeViewModel
+                )
+            }
         }
 
     }
@@ -199,6 +210,22 @@ fun HomeTopBar(
 
         }
     )
+}
+
+@Composable
+fun CheckConnectionStatus() {
+    val connection by connectivityStatus()
+    val isConnected = connection === ConnectionStatus.Available
+    ConnectivityStatus(isConnected)
+
+}
+
+@Composable
+fun connectivityStatus(): State<ConnectionStatus> {
+    val context = LocalContext.current
+    return produceState(initialValue = context.currentConnectivityStatus) {
+        context.observeConnectivityAsFlow().collect { value = it }
+    }
 }
 
 private fun logout(homeViewModel: HomeViewModel, navigateToLogin: () -> Unit) {
