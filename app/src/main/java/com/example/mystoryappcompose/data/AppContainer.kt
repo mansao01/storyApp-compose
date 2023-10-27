@@ -1,8 +1,7 @@
 package com.example.mystoryappcompose.data
 
-import android.content.Context
 import com.example.mystoryappcompose.data.local.StoryDatabase
-import com.example.mystoryappcompose.data.network.ApiConfig
+import com.example.mystoryappcompose.data.network.ApiService
 import com.example.mystoryappcompose.preferences.AuthTokenManager
 
 interface AppContainer {
@@ -10,16 +9,16 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(
-    private val token: String,
+    private val apiService: ApiService,
     private val authTokenManager: AuthTokenManager,
-    context: Context
+    private val storyDatabase: StoryDatabase,
 ) : AppContainer {
 
 
     override val myStoryRepository: MyStoryRepository by lazy {
         MyStoryRepositoryImpl(
-            ApiConfig.getApiService(token),
-            StoryDatabase.getDatabase(context),
+            apiService,
+            storyDatabase,
             authTokenManager
         )
     }

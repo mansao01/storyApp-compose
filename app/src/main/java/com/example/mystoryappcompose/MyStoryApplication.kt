@@ -13,6 +13,8 @@ import coil.request.CachePolicy
 import coil.util.DebugLogger
 import com.example.mystoryappcompose.data.AppContainer
 import com.example.mystoryappcompose.data.DefaultAppContainer
+import com.example.mystoryappcompose.data.local.StoryDatabase
+import com.example.mystoryappcompose.data.network.ApiConfig
 import com.example.mystoryappcompose.preferences.AuthTokenManager
 import kotlinx.coroutines.runBlocking
 
@@ -27,12 +29,12 @@ class MyStoryApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         authTokenManager = AuthTokenManager(dataStore)
-        val token = runBlocking {
-            authTokenManager.getAccessToken()
-        }
+        val token = runBlocking { authTokenManager.getAccessToken() }
+        val apiService = ApiConfig.getApiService(token.toString())
+        val storyDatabase = StoryDatabase.getDatabase(this)
         container = DefaultAppContainer(
-            token = token.toString(),
-            context = this,
+            apiService = apiService,
+            storyDatabase = storyDatabase,
             authTokenManager = authTokenManager
         )
 
