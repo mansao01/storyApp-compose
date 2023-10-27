@@ -74,13 +74,16 @@ fun MapScreenContent(
             )
         )
     }
+    val locationNotNull by remember {
+        mutableStateOf(location.latitude != 0.0 && location.longitude != 0.0)
+    }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentLocation, 10f)
     }
 
     GoogleMap(
-        properties = MapProperties(isMyLocationEnabled = locationEnabled),
+        properties = MapProperties(isMyLocationEnabled = locationEnabled || locationNotNull),
         cameraPositionState = cameraPositionState
     ) {
         storyList.forEach { storyItem ->

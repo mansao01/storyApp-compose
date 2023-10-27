@@ -118,6 +118,7 @@ fun AddScreenComponent(
     addViewModel: AddViewModel,
     location: LocationModel
 ) {
+    Log.d("location", location.toString())
     val context = LocalContext.current
     val file = context.createImageFile()
     val cameraUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
@@ -207,20 +208,22 @@ fun AddScreenComponent(
                 .padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(text = "With location?")
-            Spacer(modifier = Modifier.padding(8.dp))
-            Switch(checked = checked, onCheckedChange = { isChecked ->
-                checked = isChecked
-            })
+        if (location.latitude != 0.0 && location.longitude != 0.0) {
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(text = "With location?")
+                Spacer(modifier = Modifier.padding(8.dp))
+                Switch(checked = checked, onCheckedChange = { isChecked ->
+                    checked = isChecked
+                })
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
         UploadFile(
             imageUri = galleryImageUri ?: captureImageUri,
