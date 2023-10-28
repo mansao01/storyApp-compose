@@ -6,11 +6,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,9 +35,10 @@ import com.example.mystoryappcompose.ui.theme.MyStoryAppComposeTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import java.util.Locale
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 
 class MainActivity : ComponentActivity() {
     private val authViewModel by viewModels<AuthViewModel> { AuthViewModel.Factory }
@@ -50,6 +49,7 @@ class MainActivity : ComponentActivity() {
         LocationModel(0.0, 0.0)
     )
     private var isLocationEnabled by mutableStateOf(false)
+
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +66,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val startDestination = authViewModel.startDestination
 
-                    MyStoryApp(startDestination = startDestination.value, location = locationModel, locationEnabled = isLocationEnabled)
+                    MyStoryApp(
+                        startDestination = startDestination.value,
+                        location = locationModel,
+                        locationEnabled = isLocationEnabled
+                    )
                 }
             }
         }
@@ -74,8 +78,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun SetupLocationServices(context: Context) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationCallback = createLocationCallback()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val permissions = arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -83,23 +86,11 @@ class MainActivity : ComponentActivity() {
         )
 
         if (hasLocationPermissions(context, permissions)) {
-            startLocationUpdates()
+            getCurrentLocation()
             isLocationEnabled = true
 
         } else {
             RequestLocationPermissions(context, permissions)
-        }
-    }
-
-    private fun createLocationCallback(): LocationCallback {
-        return object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult.locations.firstOrNull()?.let { location ->
-                    // Update UI with location data
-                    val updatedLocation = getLocationDetails(location.latitude, location.longitude)
-                    locationModel = updatedLocation
-                }
-            }
         }
     }
 
@@ -117,7 +108,7 @@ class MainActivity : ComponentActivity() {
             val areGranted = permissionsMap.values.all { it }
             if (areGranted) {
                 locationRequired = true
-                startLocationUpdates()
+                getCurrentLocation()
                 Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -130,50 +121,28 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        locationCallback?.let {
-            val locationRequest = LocationRequest.create().apply {
-                interval = 10000
-                fastestInterval = 5000
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            }
+    private fun getCurrentLocation() {
+        fusedLocationClient?.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object :
+            CancellationToken() {
+            override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken =
+                CancellationTokenSource().token
 
-            fusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                it,
-                Looper.getMainLooper()
-            )
+
+            override fun isCancellationRequested(): Boolean = false
+        })?.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                locationModel = LocationModel(latitude, longitude)
+            }
         }
     }
 
-    private fun getLocationDetails(latitude: Double, longitude: Double): LocationModel {
-        val geocoder = Geocoder(this, Locale.getDefault())
-
-        try {
-            val addresses: MutableList<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
-            return if (addresses!!.isNotEmpty()) {
-
-                LocationModel(
-                    latitude,
-                    longitude,
-
-                    )
-            } else {
-                LocationModel(latitude, longitude)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return LocationModel(
-                latitude,
-                longitude,
-            )
-        }
-    }
 
     override fun onResume() {
         super.onResume()
         if (locationRequired) {
-            startLocationUpdates()
+            getCurrentLocation()
         }
     }
 

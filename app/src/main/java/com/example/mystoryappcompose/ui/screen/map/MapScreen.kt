@@ -1,6 +1,5 @@
 package com.example.mystoryappcompose.ui.screen.map
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -64,7 +63,6 @@ fun MapScreenContent(
     location: LocationModel,
     locationEnabled: Boolean
 ) {
-    Log.d("isLocationEnabled", locationEnabled.toString())
     val boundsBuilder = LatLngBounds.builder()
     val currentLocation by remember {
         mutableStateOf(
