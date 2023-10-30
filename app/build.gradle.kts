@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mystoryappcompose"
+    namespace = "com.mansao.mystoryappcompose"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.mystoryappcompose"
+        applicationId = "com.mansao.mystoryappcompose"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
