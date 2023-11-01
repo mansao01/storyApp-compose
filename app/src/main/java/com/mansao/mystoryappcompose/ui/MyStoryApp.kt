@@ -38,7 +38,7 @@ fun MyStoryApp(
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.Login.route) {
-            val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
+            val loginViewModel: LoginViewModel = viewModel(factory = ViewModelFactory.Factory)
             LoginScreen(
                 uiState = loginViewModel.uiState,
                 navigateToHome = {
@@ -52,7 +52,7 @@ fun MyStoryApp(
         }
 
         composable(Screen.Home.route) {
-            val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+            val homeViewModel: HomeViewModel = viewModel(factory = ViewModelFactory.Factory)
             HomeScreen(
                 uiState = homeViewModel.uiState,
                 scrollBehavior = scrollBehavior,
@@ -75,14 +75,14 @@ fun MyStoryApp(
 
         composable(Screen.Register.route) {
             val registerViewModel: RegisterViewModel =
-                viewModel(factory = RegisterViewModel.Factory)
+                viewModel(factory = ViewModelFactory.Factory)
             RegisterScreen(uiState = registerViewModel.uiState, navigateToLogin = {
                 navController.navigate(Screen.Login.route)
             })
         }
 
         composable(Screen.Add.route) {
-            val addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory)
+            val addViewModel: AddViewModel = viewModel(factory = ViewModelFactory.Factory)
             AddScreen(
                 uiState = addViewModel.uiState,
                 scrollBehavior = scrollBehavior,
@@ -103,7 +103,7 @@ fun MyStoryApp(
         }
 
         composable(Screen.Map.route) {
-            val mapViewModel: MapViewModel = viewModel(factory = MapViewModel.Factory)
+            val mapViewModel: MapViewModel = viewModel(factory = ViewModelFactory.Factory)
             MapScreen(
                 uiState = mapViewModel.uiState,
                 location = location,

@@ -56,6 +56,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mansao.mystoryappcompose.R
 import com.mansao.mystoryappcompose.data.local.model.LocationModel
+import com.mansao.mystoryappcompose.ui.ViewModelFactory
 import com.mansao.mystoryappcompose.ui.common.AddUiState
 import com.mansao.mystoryappcompose.ui.component.LoadingScreen
 import com.mansao.mystoryappcompose.ui.component.MToast
@@ -71,7 +72,7 @@ import java.util.Locale
 @Composable
 fun AddScreen(
     uiState: AddUiState,
-    addViewModel: AddViewModel = viewModel(factory = AddViewModel.Factory),
+    addViewModel: AddViewModel = viewModel(factory = ViewModelFactory.Factory),
     navigateToHome: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     location: LocationModel

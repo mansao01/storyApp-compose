@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mansao.mystoryappcompose.R
+import com.mansao.mystoryappcompose.ui.ViewModelFactory
 import com.mansao.mystoryappcompose.ui.common.RegisterUiState
 import com.mansao.mystoryappcompose.ui.component.LoadingScreen
 import com.mansao.mystoryappcompose.ui.component.MToast
@@ -45,7 +46,7 @@ import com.mansao.mystoryappcompose.ui.component.MToast
 fun RegisterScreen(
     uiState: RegisterUiState,
     modifier: Modifier = Modifier,
-    registerViewModel: RegisterViewModel = viewModel(factory = RegisterViewModel.Factory),
+    registerViewModel: RegisterViewModel = viewModel(factory = ViewModelFactory.Factory),
     navigateToLogin:() ->Unit
 ) {
     val context = LocalContext.current

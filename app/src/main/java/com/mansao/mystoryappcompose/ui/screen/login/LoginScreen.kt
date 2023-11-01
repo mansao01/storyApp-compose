@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mansao.mystoryappcompose.R
+import com.mansao.mystoryappcompose.ui.ViewModelFactory
 import com.mansao.mystoryappcompose.ui.common.LoginUiState
 import com.mansao.mystoryappcompose.ui.component.LoadingScreen
 import com.mansao.mystoryappcompose.ui.component.MToast
@@ -54,7 +55,7 @@ import com.mansao.mystoryappcompose.ui.component.MToast
 @Composable
 fun LoginScreen(
     uiState: LoginUiState,
-    loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory),
+    loginViewModel: LoginViewModel = viewModel(factory = ViewModelFactory.Factory),
     navigateToHome: () -> Unit,
     navigateToRegister: () -> Unit
 ) {

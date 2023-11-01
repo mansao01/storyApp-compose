@@ -33,10 +33,13 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mansao.mystoryappcompose.BuildConfig
 import com.mansao.mystoryappcompose.data.network.response.ListStoryItem
 import com.mansao.mystoryappcompose.preferences.AuthViewModel
 import com.mansao.mystoryappcompose.ui.SharedViewModel
+import com.mansao.mystoryappcompose.ui.ViewModelFactory
 import com.mansao.mystoryappcompose.ui.common.HomeUiState
 import com.mansao.mystoryappcompose.ui.component.ConnectivityStatus
 import com.mansao.mystoryappcompose.ui.component.LoadingScreen
@@ -46,8 +49,6 @@ import com.mansao.mystoryappcompose.ui.component.StoryItem
 import com.mansao.mystoryappcompose.utils.ConnectionStatus
 import com.mansao.mystoryappcompose.utils.currentConnectivityStatus
 import com.mansao.mystoryappcompose.utils.observeConnectivityAsFlow
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -55,8 +56,8 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
-    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory),
+    homeViewModel: HomeViewModel = viewModel(factory = ViewModelFactory.Factory),
+    authViewModel: AuthViewModel = viewModel(factory = ViewModelFactory.Factory),
     sharedViewModel: SharedViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
     navigateToLogin: () -> Unit,
