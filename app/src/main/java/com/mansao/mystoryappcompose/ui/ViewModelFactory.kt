@@ -14,7 +14,6 @@ import com.mansao.mystoryappcompose.ui.screen.regsiter.RegisterViewModel
 
 object ViewModelFactory {
     val Factory = viewModelFactory {
-        val repository =  myStoryApplication().container.myStoryRepository,
         initializer {
             HomeViewModel(
                 myStoryRepository = myStoryApplication().container.myStoryRepository,
@@ -49,7 +48,6 @@ object ViewModelFactory {
             AuthViewModel(
                 authTokenManager = myStoryApplication().authTokenManager
             )
-
         }
     }
 }
