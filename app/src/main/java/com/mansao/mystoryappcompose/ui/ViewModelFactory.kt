@@ -24,7 +24,7 @@ object ViewModelFactory {
         initializer {
             AddViewModel(
                 myStoryRepository = myStoryApplication().container.myStoryRepository,
-                )
+            )
         }
 
         initializer {
@@ -42,7 +42,7 @@ object ViewModelFactory {
         initializer {
             MapViewModel(
                 myStoryRepository = myStoryApplication().container.myStoryRepository,
-                )
+            )
         }
         initializer {
             AuthViewModel(
