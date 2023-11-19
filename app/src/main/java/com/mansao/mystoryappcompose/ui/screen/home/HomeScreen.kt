@@ -151,10 +151,12 @@ fun StoryList(
         items(count = lazyPagingItems.itemCount) { index ->
             val item = lazyPagingItems[index]
             if (item != null) {
-                StoryItem(story = item, modifier = modifier.clickable {
-                    sharedViewModel.addStory(newStory = item)
-                    navigateToDetail()
-                })
+                StoryItem(
+                    story = item,
+                    modifier = modifier.clickable {
+                        sharedViewModel.addStory(newStory = item)
+                        navigateToDetail()
+                    })
             }
         }
     }

@@ -43,23 +43,6 @@ class AuthViewModel(
 }
 
 
-//    fun getLoginState(){
-//        viewModelScope.launch {
-//            authTokenManager.getAccessToken()
-//        }
-//    }
-
-//    suspend fun getAccessToken():String {
-//        return authTokenManager.getAccessToken().toString()
-//
-//    }
-
-//    fun removeAccessToken() {
-//        viewModelScope.launch {
-//            authTokenManager.clearTokens()
-//        }
-//    }
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
